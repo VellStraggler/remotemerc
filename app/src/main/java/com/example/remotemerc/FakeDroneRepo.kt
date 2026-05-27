@@ -26,14 +26,23 @@ class FakeDroneRepo {
     fun getAll(): List<Drone> {
         return fakeDrones.toList()
     }
+    fun getById(id: Int): Drone? {
+        fakeDrones.forEach {
+            if(it.id == id) {
+                return it
+            }
+        }
+        return null
+    }
     fun getLast(): Drone? {
         if (fakeDrones.isEmpty()) {
             return null
         }
         return fakeDrones.last()
     }
-    fun generateDrones(amt: Int = 1) {
+    fun generateDrones(amt: Int = 1): List<Drone> {
         repeat(amt) { generateDrone() }
+        return getAll()
     }
 
     private fun generateDrone() {

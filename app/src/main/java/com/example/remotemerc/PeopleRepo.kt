@@ -29,8 +29,9 @@ class FakePeopleRepo {
         return fakePeople.last()
     }
 
-    fun generatePeople(amt:Int = 1) {
+    fun generatePeople(amt:Int = 1): List<FakePerson> {
         repeat(amt) {generatePerson()}
+        return getAll()
     }
     private fun generatePerson() {
         val name = faker.name().fullName()

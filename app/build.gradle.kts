@@ -57,4 +57,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation("com.github.javafaker:javafaker:1.0.2")
+    implementation("androidx.compose.material:material-icons-extended")
 }
