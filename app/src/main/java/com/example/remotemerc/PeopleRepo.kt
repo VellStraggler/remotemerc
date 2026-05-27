@@ -5,7 +5,7 @@ import com.github.javafaker.Faker
 import java.util.Locale
 import java.util.Random
 
-class FakePersonRepo {
+class FakePeopleRepo {
     private val rng = kotlin.random.Random(21398)
     private val faker = Faker(Locale.ENGLISH, Random(21398))
     private var idInc = 0
@@ -17,16 +17,16 @@ class FakePersonRepo {
             this.addAll(listOf(
                 "Marietta", "Austell"))
         }
-    private val fakeUsers: MutableList<FakeUser> = mutableListOf()
+    private val fakePeople: MutableList<FakePerson> = mutableListOf()
 
-    fun getAll():List<FakeUser> {
-        return fakeUsers.toList()
+    fun getAll():List<FakePerson> {
+        return fakePeople.toList()
     }
-    fun getLast(): FakeUser? {
-        if(fakeUsers.isEmpty()) {
+    fun getLast(): FakePerson? {
+        if(fakePeople.isEmpty()) {
             return null
         }
-        return fakeUsers.last()
+        return fakePeople.last()
     }
 
     fun generatePeople(amt:Int = 1) {
@@ -43,14 +43,14 @@ class FakePersonRepo {
             else -> (9000..18000).random(rng) * 10
         }
 
-        val newUser = FakeUser(idInc, name, town, income)
-        fakeUsers.add(newUser)
+        val newUser = FakePerson(idInc, name, town, income)
+        fakePeople.add(newUser)
         idInc++
         Log.d("SIZE",getLast().toString())
     }
 }
 
-data class FakeUser(
+data class FakePerson(
     val id: Int,
     val fullName: String,
     var location: String,
