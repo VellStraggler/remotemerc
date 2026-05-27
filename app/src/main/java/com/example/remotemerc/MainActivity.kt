@@ -18,6 +18,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val fakeDroneRepo = FakeDroneRepo()
+            val fakePeopleRepo= FakePeopleRepo()
+
+            fakeDroneRepo.generateDrones(100)
+            fakePeopleRepo.generatePeople(100)
+
             RemoteMercTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(

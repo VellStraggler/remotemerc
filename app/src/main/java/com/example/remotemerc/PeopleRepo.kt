@@ -35,18 +35,19 @@ class FakePeopleRepo {
     private fun generatePerson() {
         val name = faker.name().fullName()
         val town = easyCities[rng.nextInt(easyCities.size)]
-        val incomeBase = rng.nextInt(100)
-        val income = when(incomeBase) {
-            // multiples of 10 only
-            in 0..49 -> (1900..4000).random(rng) * 10
-            in 50..79-> (4000..9000).random(rng) * 10
-            else -> (9000..18000).random(rng) * 10
+        val bountyBase = rng.nextInt(100)
+        val bounty = when(bountyBase) {
+            // multiples of 100 only
+            in 0..49 -> (190..400).random(rng) * 100
+            in 50..79-> (400..900).random(rng) * 100
+            in 80..95-> (900..1800).random(rng) * 100
+            else -> (1800..50000).random(rng) * 100
         }
 
-        val newUser = FakePerson(idInc, name, town, income)
-        fakePeople.add(newUser)
+        val newPerson = FakePerson(idInc, name, town, bounty)
+        fakePeople.add(newPerson)
         idInc++
-        Log.d("SIZE",getLast().toString())
+        Log.d("PERSON",getLast().toString())
     }
 }
 
