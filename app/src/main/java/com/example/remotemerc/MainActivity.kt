@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.remotemerc.presentation.ui.DroneShopScreen
 import com.example.remotemerc.ui.theme.RemoteMercTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,8 +30,9 @@ class MainActivity : ComponentActivity() {
 
             RemoteMercTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    DroneControl(Modifier.padding(innerPadding),
-                        droneViewModel)
+//                    DroneControl(Modifier.padding(innerPadding),
+//                        droneViewModel)
+                    DroneShopScreen()
                 }
             }
         }
