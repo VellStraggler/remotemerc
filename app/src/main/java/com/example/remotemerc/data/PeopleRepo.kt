@@ -1,4 +1,4 @@
-package com.example.remotemerc
+package com.example.remotemerc.data
 
 import android.util.Log
 import com.github.javafaker.Faker

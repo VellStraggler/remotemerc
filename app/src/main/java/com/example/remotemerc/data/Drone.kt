@@ -1,4 +1,4 @@
-package com.example.remotemerc
+package com.example.remotemerc.data
 
 data class Drone(
     val id: Int = 1000000,

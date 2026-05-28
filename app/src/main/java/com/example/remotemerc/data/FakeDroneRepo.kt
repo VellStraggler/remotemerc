@@ -1,11 +1,11 @@
-package com.example.remotemerc
+package com.example.remotemerc.data
 
 import android.util.Log
-import java.lang.Math.pow
 import kotlin.math.pow
+import kotlin.random.Random
 
 class FakeDroneRepo {
-    private val rng = kotlin.random.Random(21398)
+    private val rng = Random(21398)
     private var idInc = 0
 
     private val droneBuzzWords = listOf(

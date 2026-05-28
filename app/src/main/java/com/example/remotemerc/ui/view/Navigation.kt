@@ -1,4 +1,4 @@
-package com.example.remotemerc
+package com.example.remotemerc.ui.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +21,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.remotemerc.presentation.ui.DroneShopScreen
+import com.example.remotemerc.data.DroneViewModel
+import com.example.remotemerc.R
 
 sealed class AppScreen(val route: String) {
     data object Landing : AppScreen("landing-page")
@@ -79,7 +80,7 @@ fun AppNavHost(
     ) {
 
         composable(AppScreen.Landing.route) {
-            LandingScreen(droneViewModel = droneViewModel)
+            LandingPage()
         }
 
         composable(AppScreen.DroneControl.route) {

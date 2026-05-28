@@ -1,4 +1,4 @@
-package com.example.remotemerc
+package com.example.remotemerc.data
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
