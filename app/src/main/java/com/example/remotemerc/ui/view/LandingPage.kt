@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +24,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun LandingPage() {
@@ -59,37 +62,45 @@ fun LandingPageTopBar() {
                 )
         }
         Text("Score: 900")
-        Text("$190000")
+        Text("\$190000")
     }
 }
 
 @Composable
 fun LandingPageCenterSection() {
+    val placeholderItems = List(3) { "placeholder text" }
     Column(modifier = Modifier
         .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(25.dp))
-        Card (modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-        ) {
-            Text("Active Missions")
-            LazyColumn {
-                items(3) {
-                    Text("Mission...")
-                }
-            }
-        }
+        LandingPageListBox("Active Missions", placeholderItems)
+        LandingPageListBox("Available Missions", placeholderItems)
+    }
+}
 
-        Card (modifier = Modifier
+@Composable
+fun LandingPageListBox(
+    title: String,
+    rowItems: List<String>
+) {
+    Text(text=title,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold)
+    Card(
+        modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-        ) {
-            Text("High Level Bounties")
-            LazyColumn {
-                items(3) {
-                    Text("Mission...")
+            .height(150.dp)
+    ) {
+        Column {
+            LazyColumn (
+                modifier = Modifier.padding(all = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(rowItems) { item ->
+                    Text(text=item,
+                        fontSize = 20.sp)
                 }
             }
         }
