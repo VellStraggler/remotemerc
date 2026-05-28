@@ -23,10 +23,11 @@ import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
 import kotlin.math.abs
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-const val PEOPLE_SCALE = .005f
+const val PEOPLE_SCALE = 2f
 const val TREE_SCALE = .5f
 @Composable
 fun GameScreen(
@@ -49,6 +50,9 @@ fun GameScreen(
     }
 
     var treeInstances by remember {
+        mutableStateOf<List<FilamentInstance>>(emptyList())
+    }
+    var personInstances by remember {
         mutableStateOf<List<FilamentInstance>>(emptyList())
     }
 
@@ -104,6 +108,25 @@ fun GameScreen(
                 modelInstance = instance,
                 position = data.treePositions[index],
                 scale = Scale(TREE_SCALE)
+            )
+        }
+        //test people
+        data.peoplePositions.forEach {
+            val dx = playerViewModel.position.x - it.x
+            val dz = playerViewModel.position.z - it.z
+
+            val yaw = Math.toDegrees(
+                atan2(dx.toDouble(), dz.toDouble())
+            ).toFloat()
+
+            ImageNode(
+                imageFileLocation = "models/lego_dude.png",
+                position = it,
+                scale = Scale(PEOPLE_SCALE),
+                rotation = Rotation(
+                    0f,
+                    yaw,
+                    0f)
             )
         }
     }
