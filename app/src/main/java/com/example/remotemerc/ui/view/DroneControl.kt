@@ -214,6 +214,7 @@ fun DroneCard(drone: Drone, onClick: () -> Unit) {
                 "Drone Icon",
                 modifier = Modifier.weight(1f))
             Text(drone.model,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.White

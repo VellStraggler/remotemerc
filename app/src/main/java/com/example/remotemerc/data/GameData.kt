@@ -10,7 +10,6 @@ class GameData(playerViewModel: PlayerViewModel) {
     var treeInstances: MutableList<ModelInstance> = mutableListOf()
 
     var peoplePositions: MutableList<Position> = mutableListOf()
-    var peopleInstances: MutableList<ModelInstance> = mutableListOf()
 
     var random = Random(101)
 
@@ -30,7 +29,7 @@ class GameData(playerViewModel: PlayerViewModel) {
             val chunkX = random.nextInt(-5,5)
             val chunkZ = random.nextInt(-5,5)
 
-            val position = Position(ranX + (chunkX * 105f), 0f, ranZ + (chunkZ * 105f))
+            val position = Position(ranX + (chunkX * 55f), 0f, ranZ + (chunkZ * 55f))
             treePositions.add(position)
         }
         repeat(100) {
@@ -40,12 +39,8 @@ class GameData(playerViewModel: PlayerViewModel) {
             val chunkX = random.nextInt(-5,5)
             val chunkZ = random.nextInt(-5,5)
 
-            val position = Position(ranX + (chunkX * 105f), PEOPLE_SCALE/3, ranZ + (chunkZ * 105f))
+            val position = Position(ranX + (chunkX * 55f), PEOPLE_SCALE/3.0f, ranZ + (chunkZ * 55f))
             peoplePositions.add(position)
         }
-    }
-
-    fun addInstance(obj: ModelInstance) {
-        treeInstances.add(obj)
     }
 }

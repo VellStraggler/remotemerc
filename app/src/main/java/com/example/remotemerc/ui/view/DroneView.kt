@@ -1,5 +1,8 @@
 package com.example.remotemerc.ui.view
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.example.remotemerc.data.GameData
 import com.example.remotemerc.data.PlayerViewModel
 import com.google.android.filament.Engine
+import com.google.android.filament.MaterialInstance
+import com.google.android.filament.Texture
 import com.google.android.filament.gltfio.FilamentInstance
 import io.github.sceneview.SceneView
 import io.github.sceneview.math.Position
@@ -22,7 +28,7 @@ import io.github.sceneview.math.Size
 import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
-import kotlin.math.abs
+import java.nio.ByteBuffer
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -33,7 +39,8 @@ const val TREE_SCALE = .5f
 fun GameScreen(
     engine: Engine,
     playerViewModel: PlayerViewModel,
-    data: GameData
+    data: GameData,
+    context: Context = LocalContext.current
 ) {
     Log.d("RECOMP", "GameScreen recomposed")
     val materialLoader = rememberMaterialLoader(engine)
@@ -43,16 +50,66 @@ fun GameScreen(
         position = data.camPos
         lookAt(data.lookPos)
     }
-    val greenMaterial = remember {
-        materialLoader.createColorInstance(
-            Color.GREEN
-        )
+    val personBitMap = BitmapFactory.decodeStream(
+        context.assets.open("models/lego_dude.png"))
+    val buffer1 = ByteBuffer.allocateDirect(personBitMap.byteCount)
+    personBitMap.copyPixelsToBuffer(buffer1)
+    buffer1.rewind()
+    val descriptor1 = Texture.PixelBufferDescriptor(
+        buffer1,
+        Texture.Format.RGBA,
+        Texture.Type.UBYTE,
+        1,
+        0,
+        0,
+        personBitMap.width,
+        null,
+        null
+    )
+    val personMaterial = remember {
+        materialLoader.createImageInstance(Texture.Builder()
+            .width(personBitMap.width)
+            .height(personBitMap.height)
+            .sampler(Texture.Sampler.SAMPLER_2D)
+            .format(Texture.InternalFormat.SRGB8_A8)
+            .build(engine)
+            .apply {
+                setImage(engine, 0, descriptor1)
+            })
     }
 
-    var treeInstances by remember {
-        mutableStateOf<List<FilamentInstance>>(emptyList())
+    val grassBitmap = BitmapFactory.decodeStream(
+        context.assets.open("models/Grass_02.png"))
+    val buffer = ByteBuffer.allocateDirect(grassBitmap.byteCount)
+    grassBitmap.copyPixelsToBuffer(buffer)
+    buffer.rewind()
+    val descriptor = Texture.PixelBufferDescriptor(
+        buffer,
+        Texture.Format.RGBA,
+        Texture.Type.UBYTE,
+        1,
+        0,
+        0,
+        grassBitmap.width,
+        null,
+        null
+    )
+    val grassMaterial = remember {
+        materialLoader.createImageInstance(Texture.Builder()
+            .width(grassBitmap.width)
+            .height(grassBitmap.height)
+            .sampler(Texture.Sampler.SAMPLER_2D)
+            .format(Texture.InternalFormat.SRGB8_A8)
+            .build(engine)
+            .apply {
+                setImage(engine, 0, descriptor)
+            })
     }
-    var personInstances by remember {
+    val greenMaterial = remember {materialLoader.createColorInstance(
+        Color.argb(1f,0.2f,0.65f,0.2f)
+    ) }
+
+    var treeInstances by remember {
         mutableStateOf<List<FilamentInstance>>(emptyList())
     }
 
@@ -61,7 +118,6 @@ fun GameScreen(
             "models/tree_low_poly.glb",
             20
         )
-
     }
 
     SceneView(modifier = Modifier.fillMaxSize(),
@@ -90,26 +146,6 @@ fun GameScreen(
             cameraNode.lookAt(data.lookPos)
         }
     ) {
-        // test planes
-        for (x in -4..6) {
-            for (z in -4..6) {
-                PlaneNode(
-                    size = Size(100.0f, 100.0f),
-                    position = Position(x = -105.0f + (x*105f), y = -0.1f, z = -105.0f + (z*105f)),
-                    rotation = Rotation(-90f,0f, 0f),
-                    materialInstance = greenMaterial
-                )
-            }
-        }
-
-        //test trees
-        treeInstances.forEachIndexed { index, instance ->
-            ModelNode(
-                modelInstance = instance,
-                position = data.treePositions[index],
-                scale = Scale(TREE_SCALE)
-            )
-        }
         //test people
         data.peoplePositions.forEach {
             val dx = playerViewModel.position.x - it.x
@@ -119,14 +155,31 @@ fun GameScreen(
                 atan2(dx.toDouble(), dz.toDouble())
             ).toFloat()
 
-            ImageNode(
-                imageFileLocation = "models/lego_dude.png",
-                position = it,
+            PlaneNode(
+//                imageFileLocation = "models/lego_dude.png",
+                materialInstance = personMaterial,
+                position = Position(it.x,it.y,it.z),
                 scale = Scale(PEOPLE_SCALE),
                 rotation = Rotation(
                     0f,
                     yaw,
-                    0f)
+                    0f),
+
+            )
+        }
+        PlaneNode(
+            size = Size(550f,550f),
+            position = Position(0f,0f,0f),
+            rotation = Rotation(-90f,0f, 0f),
+            materialInstance = greenMaterial
+        )
+
+        //test trees
+        treeInstances.forEachIndexed { index, instance ->
+            ModelNode(
+                modelInstance = instance,
+                position = data.treePositions[index],
+                scale = Scale(TREE_SCALE)
             )
         }
     }

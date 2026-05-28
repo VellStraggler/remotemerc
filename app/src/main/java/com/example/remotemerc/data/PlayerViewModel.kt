@@ -10,8 +10,8 @@ import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 
 const val SPEED_MULT = -0.0002
-const val TURN_MUlT = -0.01f
-const val HEIGHT_MULT = 0.0002f
+const val TURN_MUlT = -0.03f
+const val HEIGHT_MULT = 0.0008f
 
 class PlayerViewModel : ViewModel() {
 
