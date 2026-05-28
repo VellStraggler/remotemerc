@@ -36,41 +36,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
 @Composable
-fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel) {
-    if (droneViewModel.selectedDroneId != -1) {
-        val drone = droneViewModel.getById(droneViewModel.selectedDroneId)!!
-        DroneView(drone)
-    } else {
-        DroneFleet(droneViewModel)
-    }
+fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
+                 navController: NavHostController) {
+    DroneFleet(droneViewModel, navController)
 }
 
 @Composable
-fun DroneView(drone: Drone) {
+fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
-        DroneScene(drone)
-        DroneUI()
+        DroneScene(getDrone)
+        DroneUI(onBack)
     }
 }
 
 @Composable
-fun DroneUI() {
+fun DroneUI(onBack: () -> Unit) {
     Column(Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
-        IconButton({}, modifier = Modifier.size(24.dp)) {
+        IconButton({
+            onBack()
+        }, modifier = Modifier.size(24.dp)) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go Back")
         }
         DroneControls()
     }
 }
 @Composable
-fun DroneScene(drone: Drone) {
-    Box(Modifier.fillMaxSize().background(Color.White),
-        contentAlignment = Alignment.Center) {
+fun DroneScene(getDrone: () -> Drone?) {
+    val drone = getDrone()
+    if (drone != null) {
+        Box(Modifier.fillMaxSize().background(Color.White),
+            contentAlignment = Alignment.Center) {
             Text("Example Scene for drone ${drone.model}")
+        }
     }
 }
 
@@ -113,7 +116,7 @@ fun PrimaryButton() {
 }
 
 @Composable
-fun DroneFleet(droneViewModel: DroneViewModel) {
+fun DroneFleet(droneViewModel: DroneViewModel, navController: NavHostController) {
     val drones: List<Drone> by remember { mutableStateOf(droneViewModel.getAllOwned()) }
 
     Column(Modifier.fillMaxSize()
@@ -128,7 +131,9 @@ fun DroneFleet(droneViewModel: DroneViewModel) {
         ) {
             items(drones) { drone ->
                 if (drone.id == droneViewModel.selectedDroneId) {
-                    HighlightedDroneCard(drone) {}
+                    HighlightedDroneCard(drone) {
+                        navController.navigate("drone-view")
+                    }
                 } else {
                     DroneCard(drone) { droneViewModel.selectedDroneId = drone.id }
                 }
@@ -139,14 +144,16 @@ fun DroneFleet(droneViewModel: DroneViewModel) {
 
 @Composable
 fun DroneCard(drone: Drone, onClick: () -> Unit) {
-    Box(Modifier.fillMaxSize()
+    Box(Modifier.size(120.dp)
         .clickable {
             onClick()
         }) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(Modifier.size(120.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
             Image(painterResource(R.drawable.drone_icon_simple),
-                "Drone Icon")
+                "Drone Icon",
+                modifier = Modifier.weight(1f))
             Text(drone.model,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

@@ -36,6 +36,10 @@ class DroneViewModel: ViewModel() {
         return fakeDroneRepo.getById(id)
     }
 
+    fun getSelected() : Drone? {
+        return getById(selectedDroneId)
+    }
+
     fun purchaseById(id: Int) {
         val response = attemptPurchase(id)
     }

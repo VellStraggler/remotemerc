@@ -83,11 +83,18 @@ fun AppNavHost(
         }
 
         composable(AppScreen.DroneControl.route) {
-            DroneControl(droneViewModel = droneViewModel)
+            DroneControl(droneViewModel = droneViewModel, navController = navController)
         }
 
         composable(AppScreen.DroneShop.route) {
             DroneShopScreen(droneViewModel = droneViewModel)
+        }
+
+        composable(AppScreen.DroneView.route) {
+            DroneView({droneViewModel.getSelected()}, {
+                droneViewModel.selectedDroneId = -1
+                navController.navigate("drone-control")
+            })
         }
     }
 }
