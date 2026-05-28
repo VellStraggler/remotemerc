@@ -7,55 +7,99 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class DroneViewModel: ViewModel() {
+class DroneViewModel : ViewModel() {
 
     var selectedDroneId by mutableIntStateOf(-1)
+        private set
+
+    var selectedPersonId by mutableIntStateOf(-1)
+        private set
 
     var cash by mutableDoubleStateOf(190000.0)
+        private set
 
-    var fakeDroneRepo = FakeDroneRepo()
-    var shopDrones: MutableList<Drone> = mutableStateListOf()
-    private set
+    private val fakeDroneRepo = FakeDroneRepo()
+    private val fakePeopleRepo = FakePeopleRepo()
 
-    var myDrones: MutableList<Drone> = mutableStateListOf(fakeDroneRepo.generateDrone())
-    private set
+    var shopDrones = mutableStateListOf<Drone>()
+        private set
+
+    var myDrones = mutableStateListOf<Drone>()
+        private set
+
+    var fakePeople = mutableStateListOf<FakePerson>()
+        private set
 
     init {
         fakeDroneRepo.generateDrones(100)
         shopDrones.addAll(fakeDroneRepo.getAll())
+
+        val starterDrone = fakeDroneRepo.generateDrone()
+        myDrones.add(starterDrone)
+
+        fakePeopleRepo.generatePeople(25)
+        fakePeople.addAll(fakePeopleRepo.getAll())
     }
 
-
-    fun getAll() : List<Drone> {
+    fun getAll(): List<Drone> {
         return shopDrones.toList()
     }
+
     fun getAllOwned(): List<Drone> {
         return myDrones.toList()
     }
-    fun getById(id: Int) : Drone? {
-        return fakeDroneRepo.getById(id)
+
+    fun getAllPeople(): List<FakePerson> {
+        return fakePeople.toList()
     }
 
-    fun getSelected() : Drone? {
-        return getById(selectedDroneId)
+    fun getDroneById(id: Int): Drone? {
+        return shopDrones.firstOrNull { drone ->
+            drone.id == id
+        } ?: myDrones.firstOrNull { drone ->
+            drone.id == id
+        }
+    }
+
+    fun getPersonById(id: Int): FakePerson? {
+        return fakePeople.firstOrNull { person ->
+            person.id == id
+        }
+    }
+
+    fun selectDrone(id: Int) {
+        selectedDroneId = id
+    }
+
+    fun selectPerson(id: Int) {
+        selectedPersonId = id
+    }
+
+    fun getSelectedDrone(): Drone? {
+        return getDroneById(selectedDroneId)
+    }
+
+    fun getSelectedPerson(): FakePerson? {
+        return getPersonById(selectedPersonId)
     }
 
     fun purchaseById(id: Int) {
-        val response = attemptPurchase(id)
+        attemptPurchase(id)
     }
 
     private fun attemptPurchase(id: Int): Boolean {
-        shopDrones.forEach {
-            if(it.id == id) {
-                if(it.priceUSD <= cash) {
-                    cash -= it.priceUSD
-                    myDrones.add(it)
-                    shopDrones.remove(it)
-                    return true
-                }
-            }
-        }
-        return false
-    }
+        val droneToBuy = shopDrones.firstOrNull { drone ->
+            drone.id == id
+        } ?: return false
 
+        if (droneToBuy.priceUSD > cash) {
+            return false
+        }
+
+        cash -= droneToBuy.priceUSD
+        myDrones.add(droneToBuy)
+        shopDrones.remove(droneToBuy)
+
+        return true
+    }
 }
