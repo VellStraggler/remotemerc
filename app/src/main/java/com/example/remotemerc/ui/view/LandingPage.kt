@@ -42,7 +42,7 @@ fun LandingPageTopBar() {
             .fillMaxWidth()
             .height(80.dp)
             .background(color=Color.LightGray)
-            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
+            .padding(start = 10.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -58,11 +58,10 @@ fun LandingPageTopBar() {
                 contentDescription = "Profile picture",
                 modifier = Modifier.size(56.dp),
                 tint = Color.Black,
-
                 )
         }
         Text("Score: 900")
-        Text("\$190000")
+        Text("Money: \$190000")
     }
 }
 
