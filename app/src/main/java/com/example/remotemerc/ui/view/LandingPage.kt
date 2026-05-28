@@ -1,6 +1,7 @@
 package com.example.remotemerc.ui.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +29,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LandingPage() {
+fun LandingPage(onClickMission: () -> Unit) {
     Column() {
         LandingPageTopBar()
-        LandingPageCenterSection()
+        LandingPageCenterSection(onClickMission)
     }
 }
 
@@ -66,22 +67,23 @@ fun LandingPageTopBar() {
 }
 
 @Composable
-fun LandingPageCenterSection() {
+fun LandingPageCenterSection(onClickMission: () -> Unit) {
     val placeholderItems = List(3) { "placeholder text" }
     Column(modifier = Modifier
         .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(25.dp))
-        LandingPageListBox("Active Missions", placeholderItems)
-        LandingPageListBox("Available Missions", placeholderItems)
+        LandingPageListBox("Active Missions", placeholderItems, onClickMission)
+        LandingPageListBox("Available Missions", placeholderItems, onClickMission)
     }
 }
 
 @Composable
 fun LandingPageListBox(
     title: String,
-    rowItems: List<String>
+    rowItems: List<String>,
+    onRowClick: () -> Unit
 ) {
     Text(text=title,
         fontSize = 24.sp,
@@ -99,7 +101,10 @@ fun LandingPageListBox(
             ) {
                 items(rowItems) { item ->
                     Text(text=item,
-                        fontSize = 20.sp)
+                        fontSize = 20.sp,
+                        modifier = Modifier.clickable {
+                            onRowClick()
+                        })
                 }
             }
         }

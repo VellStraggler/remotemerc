@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
+import com.example.remotemerc.data.FakePerson
 import com.example.remotemerc.data.PlayerViewModel
 import com.example.remotemerc.presentation.ui.DroneShopScreen
 
@@ -31,6 +32,7 @@ sealed class AppScreen(val route: String) {
     data object DroneControl: AppScreen("drone-control")
     data object DroneShop: AppScreen("drone-shop")
     data object DroneView: AppScreen("drone-view")
+    data object MissionView: AppScreen("mission-view")
 
     companion object {
         val mainScreens = listOf(
@@ -83,7 +85,11 @@ fun AppNavHost(
     ) {
 
         composable(AppScreen.Landing.route) {
-            LandingPage()
+            LandingPage(
+                onClickMission = {
+                    navController.navigate("mission-view")
+                }
+            )
         }
 
         composable(AppScreen.DroneControl.route) {
@@ -100,6 +106,10 @@ fun AppNavHost(
                 navController.navigate("drone-control")
             },
                 playerViewModel)
+        }
+
+        composable(AppScreen.MissionView.route) {
+            MissionProfilePage(FakePerson(1, "Joe Bob", "Atlanta", 69))
         }
     }
 }
