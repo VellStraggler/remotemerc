@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
+import com.example.remotemerc.data.PlayerViewModel
 
 sealed class AppScreen(val route: String) {
     data object Landing : AppScreen("landing-page")
@@ -71,7 +72,8 @@ fun MyNavBar(navController: NavController) {
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    droneViewModel: DroneViewModel
+    droneViewModel: DroneViewModel,
+    playerViewModel: PlayerViewModel
 ) {
 
     NavHost(
@@ -95,7 +97,8 @@ fun AppNavHost(
             DroneView({droneViewModel.getSelected()}, {
                 droneViewModel.selectedDroneId = -1
                 navController.navigate("drone-control")
-            })
+            },
+                playerViewModel)
         }
     }
 }

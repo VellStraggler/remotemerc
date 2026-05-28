@@ -4,12 +4,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -24,12 +27,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,6 +44,9 @@ import androidx.navigation.NavHostController
 import com.example.remotemerc.data.Drone
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
+import com.example.remotemerc.data.GameData
+import com.example.remotemerc.data.PlayerViewModel
+import io.github.sceneview.rememberEngine
 
 @Composable
 fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
@@ -46,16 +55,16 @@ fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
 }
 
 @Composable
-fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit) {
+fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit, playerViewModel:PlayerViewModel) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
-        DroneScene(getDrone)
-        DroneUI(onBack)
+        DroneScene(getDrone, playerViewModel)
+        DroneUI(onBack, playerViewModel)
     }
 }
 
 @Composable
-fun DroneUI(onBack: () -> Unit) {
+fun DroneUI(onBack: () -> Unit, playerViewModel: PlayerViewModel) {
     Column(Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
         IconButton({
@@ -63,50 +72,100 @@ fun DroneUI(onBack: () -> Unit) {
         }, modifier = Modifier.size(24.dp)) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go Back")
         }
-        DroneControls()
+        DroneControls(playerViewModel)
     }
 }
 @Composable
-fun DroneScene(getDrone: () -> Drone?) {
+fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel) {
     val drone = getDrone()
     if (drone != null) {
         Box(Modifier.fillMaxSize().background(Color.White),
             contentAlignment = Alignment.Center) {
-            Text("Example Scene for drone ${drone.model}")
+//            Text("Example Scene for drone ${drone.model}")
+            GameScreen(
+                rememberEngine(), playerViewModel, GameData(playerViewModel)
+            )
         }
     }
 }
 
 @Composable
-fun DroneControls() {
+fun DroneControls(playerViewModel: PlayerViewModel) {
     Row(Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom){
-        JoyStick()
-        SecondaryButton()
-        PrimaryButton()
-        SecondaryButton()
-        JoyStick()
+        JoyStick {x, y ->
+               playerViewModel.forwardAcceleration = y
+        }
+        SecondaryButton({playerViewModel.upAmt = 1f}, {playerViewModel.upAmt = 0f})
+        PrimaryButton() //does nothing (kaboom?)
+        SecondaryButton({playerViewModel.upAmt = -1f},{playerViewModel.upAmt = 0f})
+        JoyStick { x, y ->
+            playerViewModel.turnAmt = x
+        }
     }
 }
 
 @Composable
-fun JoyStick() {
-    Box(Modifier.size(100.dp)
+fun JoyStick(onMove: (offsetX: Float, offsetY: Float)-> Unit) {
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+
+    val diameter = 100f
+    Box(Modifier.size(diameter.dp)
         .clip(CircleShape)
-        .background(Color(0.1f, 0.1f, 0.1f, 0.3f)),
+        .background(Color(0.5f, 0.5f, 0.5f, 0.3f))
+        .pointerInput(Unit) {
+            detectDragGestures(
+                onDragEnd = {
+                    offsetX = 0f
+                    offsetY = 0f
+                    onMove(0f, 0f)
+                }
+            ) { change, dragAmount ->
+                change.consume()
+
+                offsetX += dragAmount.x
+                offsetY += dragAmount.y
+
+                val maxRadius = diameter/2
+
+                val distance = kotlin.math.sqrt(offsetX * offsetX + offsetY * offsetY)
+                if (distance > maxRadius) {
+                    val scale = maxRadius / distance
+                    offsetX *= scale
+                    offsetY *= scale
+                }
+
+                onMove(offsetX / maxRadius, offsetY / maxRadius)
+            }}
+        ,
         contentAlignment = Alignment.Center) {
         Box(Modifier.size(10.dp)
+            .offset(offsetX.dp, offsetY.dp)
             .clip(CircleShape)
-            .background(Color.Black))
+            .background(Color.Black)
+        )
     }
 }
 
 @Composable
-fun SecondaryButton() {
+fun SecondaryButton(onHoldStart: () -> Unit, onHoldEnd: () -> Unit) {
     Box(Modifier.size(20.dp)
         .clip(CircleShape)
-        .background(Color.Gray))
+        .background(Color.Gray)
+        .pointerInput(Unit) {
+            detectTapGestures(
+                onPress = {
+                    onHoldStart()
+
+                    tryAwaitRelease() // wait until finger lifts
+
+                    onHoldEnd()
+                }
+            )
+        }
+    )
 }
 @Composable
 fun PrimaryButton() {

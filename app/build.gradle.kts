@@ -56,8 +56,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("com.github.javafaker:javafaker:1.0.2")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("io.github.sceneview:sceneview:4.11.0")
 }

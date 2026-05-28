@@ -1,0 +1,36 @@
+package com.example.remotemerc.data
+
+import io.github.sceneview.math.Position
+import io.github.sceneview.model.ModelInstance
+import kotlin.random.Random
+
+class GameData(playerViewModel: PlayerViewModel) {
+    var treePositions: MutableList<Position> = mutableListOf()
+    var treeInstances: MutableList<ModelInstance> = mutableListOf()
+    var random = Random(101)
+
+    var lookPos = Position(playerViewModel.position.x,
+        playerViewModel.position.y + 1.5f,
+        playerViewModel.position.z)
+
+    var camPos = Position(playerViewModel.position.x,
+        playerViewModel.position.y + 1f,
+        playerViewModel.position.z - 15f)
+
+    init {
+        repeat(20) {
+            val ranX = random.nextInt(-40,40).toFloat()
+            val ranZ = random.nextInt(-40,40).toFloat()
+
+            val chunkX = random.nextInt(-5,5)
+            val chunkZ = random.nextInt(-5,5)
+
+            val position = Position(ranX + (chunkX * 105f), 0f, ranZ + (chunkZ * 105f))
+            treePositions.add(position)
+        }
+    }
+
+    fun addInstance(obj: ModelInstance) {
+        treeInstances.add(obj)
+    }
+}
