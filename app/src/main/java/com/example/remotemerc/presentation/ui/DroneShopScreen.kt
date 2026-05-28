@@ -2,15 +2,15 @@ package com.example.remotemerc.presentation.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,77 +19,153 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.remotemerc.Drone
 import com.example.remotemerc.DroneViewModel
+import com.example.remotemerc.FakePerson
 import com.example.remotemerc.R
-
 
 @Composable
 fun DroneShopScreen(droneViewModel: DroneViewModel) {
+
+    val cash = droneViewModel.cash
+    val ownedDrones = droneViewModel.getAllOwned()
+    val shopDrones = droneViewModel.getAll()
+    val fakePeople = droneViewModel.getAllPeople()
+
     Scaffold { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            HeaderSection()
+            item {
+                HeaderSection(
+                    cash = cash,
+                    ownedCount = ownedDrones.size
+                )
+            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            item {
+                Text(
+                    text = "Bounty Targets",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
-            DroneCard(
-                name = "XLR",
-                price = "$990",
-                isMain = true
-            )
+            items(fakePeople.take(5)) { person ->
+                PersonBountyCard(
+                    person = person,
+                    onClick = {
+                        droneViewModel.selectPerson(person.id)
+                    }
+                )
+            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
 
-            repeat(3) {
-                DronePlaceholderCard()
-                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Drone Shop",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            items(shopDrones) { drone ->
+                DroneCard(
+                    drone = drone,
+                    canAfford = drone.priceUSD <= cash,
+                    onBuyClick = {
+                        droneViewModel.purchaseById(drone.id)
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun HeaderSection() {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+fun HeaderSection(
+    cash: Double,
+    ownedCount: Int
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Drone\nShop",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Column(horizontalAlignment = Alignment.End) {
             Text(
-                text = "Drone\nShop",
+                text = "$${cash.toInt()}",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = "$190000",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Drones owned: 16",
-                    fontSize = 14.sp
-                )
-            }
+            Text(
+                text = "Drones owned: $ownedCount",
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun PersonBountyCard(
+    person: FakePerson,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(95.dp),
+        border = BorderStroke(2.dp, Color.Black),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = onClick
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = person.fullName,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = person.location,
+                fontSize = 14.sp
+            )
+
+            Text(
+                text = "Bounty: $${person.bounty}",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
 
 @Composable
 fun DroneCard(
-    name: String,
-    price: String,
-    isMain: Boolean = false
+    drone: Drone,
+    canAfford: Boolean,
+    onBuyClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp),
+            .height(125.dp),
         border = BorderStroke(2.dp, Color.Black),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -105,66 +181,54 @@ fun DroneCard(
                     .border(2.dp, Color.Black),
                 contentAlignment = Alignment.Center
             ) {
-                Image(painterResource(R.drawable.drone_icon_simple),
-                    "Drone Icon")
+                Image(
+                    painter = painterResource(R.drawable.drone_icon_simple),
+                    contentDescription = "Drone Icon"
+                )
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Text(
-                text = name,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
+            Column(
                 modifier = Modifier.weight(1f)
-            )
+            ) {
+                Text(
+                    text = drone.model,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Speed: ${drone.topSpeedMph} mph",
+                    fontSize = 13.sp
+                )
+
+                Text(
+                    text = "Altitude: ${drone.maxAltitude} ft",
+                    fontSize = 13.sp
+                )
+
+                Text(
+                    text = "Battery: ${drone.batteryLifeSeconds}s",
+                    fontSize = 13.sp
+                )
+            }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = price,
-                    fontSize = 26.sp,
+                    text = "$${drone.priceUSD.toInt()}",
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Button(
-                    onClick = {},
+                    onClick = onBuyClick,
+                    enabled = canAfford,
                     modifier = Modifier.height(36.dp)
                 ) {
                     Text("Buy")
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun DronePlaceholderCard() {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(90.dp),
-        border = BorderStroke(2.dp, Color.Black),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(55.dp)
-                    .border(2.dp, Color.Black)
-            )
-
-            Spacer(modifier = Modifier.width(20.dp))
-
-            Box(
-                modifier = Modifier
-                    .height(8.dp)
-                    .weight(1f)
-                    .background(Color.LightGray)
-            )
         }
     }
 }
