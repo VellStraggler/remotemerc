@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
 import com.example.remotemerc.data.PlayerViewModel
+import com.example.remotemerc.presentation.ui.DroneShopScreen
 
 sealed class AppScreen(val route: String) {
     data object Landing : AppScreen("landing-page")

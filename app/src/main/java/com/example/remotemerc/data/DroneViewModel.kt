@@ -9,8 +9,7 @@ import androidx.lifecycle.ViewModel
 
 class DroneViewModel : ViewModel() {
 
-    var selectedDroneId by mutableIntStateOf(-1)
-        private set
+    public var selectedDroneId by mutableIntStateOf(-1)
 
     var selectedPersonId by mutableIntStateOf(-1)
         private set
@@ -75,7 +74,7 @@ class DroneViewModel : ViewModel() {
         selectedPersonId = id
     }
 
-    fun getSelectedDrone(): Drone? {
+    fun getSelected(): Drone? {
         return getDroneById(selectedDroneId)
     }
 
