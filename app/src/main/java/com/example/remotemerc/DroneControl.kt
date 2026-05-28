@@ -3,6 +3,7 @@ package com.example.remotemerc
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,20 +52,25 @@ fun DroneView(drone: Drone) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
         DroneScene(drone)
-        DroneControls()
+        DroneUI()
     }
 }
 
 @Composable
-fun DroneScene(drone: Drone) {
-    Column {
-        IconButton({}, modifier= Modifier.size(24.dp)) {
+fun DroneUI() {
+    Column(Modifier.fillMaxSize().padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween) {
+        IconButton({}, modifier = Modifier.size(24.dp)) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go Back")
         }
-        Box(Modifier.fillMaxSize().background(Color.Black),
-            contentAlignment = Alignment.Center) {
-                Text("Example Scene")
-        }
+        DroneControls()
+    }
+}
+@Composable
+fun DroneScene(drone: Drone) {
+    Box(Modifier.fillMaxSize().background(Color.White),
+        contentAlignment = Alignment.Center) {
+            Text("Example Scene for drone ${drone.model}")
     }
 }
 
@@ -108,7 +114,7 @@ fun PrimaryButton() {
 
 @Composable
 fun DroneFleet(droneViewModel: DroneViewModel) {
-    val drones: List<Drone> by remember { mutableStateOf(droneViewModel.getAll()) }
+    val drones: List<Drone> by remember { mutableStateOf(droneViewModel.getAllOwned()) }
 
     Column(Modifier.fillMaxSize()
         .background(Color.DarkGray)
@@ -122,9 +128,9 @@ fun DroneFleet(droneViewModel: DroneViewModel) {
         ) {
             items(drones) { drone ->
                 if (drone.id == droneViewModel.selectedDroneId) {
-                    HighlightedDroneCard(drone)
+                    HighlightedDroneCard(drone) {}
                 } else {
-                    DroneCard(drone)
+                    DroneCard(drone) { droneViewModel.selectedDroneId = drone.id }
                 }
             }
         }
@@ -132,8 +138,11 @@ fun DroneFleet(droneViewModel: DroneViewModel) {
 }
 
 @Composable
-fun DroneCard(drone: Drone) {
-    Box(Modifier.fillMaxSize()) {
+fun DroneCard(drone: Drone, onClick: () -> Unit) {
+    Box(Modifier.fillMaxSize()
+        .clickable {
+            onClick()
+        }) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
             Image(painterResource(R.drawable.drone_icon_simple),
@@ -148,10 +157,10 @@ fun DroneCard(drone: Drone) {
 }
 
 @Composable
-fun HighlightedDroneCard(drone: Drone) {
+fun HighlightedDroneCard(drone: Drone, onClick:() -> Unit) {
     Box(Modifier.size(120.dp)
         .border(2.dp, Color.White)
     ) {
-        DroneCard(drone)
+        DroneCard(drone, onClick)
     }
 }

@@ -17,7 +17,7 @@ class DroneViewModel: ViewModel() {
     var shopDrones: MutableList<Drone> = mutableStateListOf()
     private set
 
-    var myDrones: MutableList<Drone> = mutableStateListOf()
+    var myDrones: MutableList<Drone> = mutableStateListOf(fakeDroneRepo.generateDrone())
     private set
 
     init {

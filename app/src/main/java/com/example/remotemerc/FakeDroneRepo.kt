@@ -45,7 +45,7 @@ class FakeDroneRepo {
         return getAll()
     }
 
-    private fun generateDrone() {
+    fun generateDrone(): Drone {
 
         val partCount = rng.nextInt(2, 5)
 
@@ -101,5 +101,6 @@ class FakeDroneRepo {
         fakeDrones.add(newDrone)
         idInc++
         Log.d("DRONE", getLast().toString())
+        return newDrone
     }
 }
