@@ -19,14 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.remotemerc.DroneViewModel
 import com.example.remotemerc.R
 
 
 @Composable
-fun DroneShopScreen() {
-    Scaffold(
-        bottomBar = { DroneBottomBar() }
-    ) { padding ->
+fun DroneShopScreen(droneViewModel: DroneViewModel) {
+    Scaffold { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -167,37 +166,5 @@ fun DronePlaceholderCard() {
                     .background(Color.LightGray)
             )
         }
-    }
-}
-
-@Composable
-fun DroneBottomBar() {
-    NavigationBar {
-        NavigationBarItem(
-            selected = true,
-            onClick = {},
-            icon = {
-                Icon(Icons.Default.ShoppingCart, contentDescription = "Shop")
-            },
-            label = { Text("Shop") }
-        )
-
-        NavigationBarItem(
-            selected = false,
-            onClick = {},
-            icon = {
-                Icon(Icons.Default.Home, contentDescription = "Home")
-            },
-            label = { Text("Home") }
-        )
-
-        NavigationBarItem(
-            selected = false,
-            onClick = {},
-            icon = {
-                Icon(Icons.Default.Menu, contentDescription = "Menu")
-            },
-            label = { Text("Menu") }
-        )
     }
 }
