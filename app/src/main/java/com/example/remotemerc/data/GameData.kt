@@ -1,5 +1,6 @@
 package com.example.remotemerc.data
 
+import com.example.remotemerc.ui.view.PEOPLE_SCALE
 import io.github.sceneview.math.Position
 import io.github.sceneview.model.ModelInstance
 import kotlin.random.Random
@@ -7,6 +8,10 @@ import kotlin.random.Random
 class GameData(playerViewModel: PlayerViewModel) {
     var treePositions: MutableList<Position> = mutableListOf()
     var treeInstances: MutableList<ModelInstance> = mutableListOf()
+
+    var peoplePositions: MutableList<Position> = mutableListOf()
+    var peopleInstances: MutableList<ModelInstance> = mutableListOf()
+
     var random = Random(101)
 
     var lookPos = Position(playerViewModel.position.x,
@@ -27,6 +32,16 @@ class GameData(playerViewModel: PlayerViewModel) {
 
             val position = Position(ranX + (chunkX * 105f), 0f, ranZ + (chunkZ * 105f))
             treePositions.add(position)
+        }
+        repeat(100) {
+            val ranX = random.nextInt(-40,40).toFloat()
+            val ranZ = random.nextInt(-40,40).toFloat()
+
+            val chunkX = random.nextInt(-5,5)
+            val chunkZ = random.nextInt(-5,5)
+
+            val position = Position(ranX + (chunkX * 105f), PEOPLE_SCALE/3, ranZ + (chunkZ * 105f))
+            peoplePositions.add(position)
         }
     }
 
