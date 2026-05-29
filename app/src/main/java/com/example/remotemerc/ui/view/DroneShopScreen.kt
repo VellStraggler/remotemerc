@@ -30,7 +30,6 @@ fun DroneShopScreen(droneViewModel: DroneViewModel) {
     val cash = droneViewModel.cash
     val ownedDrones = droneViewModel.getAllOwned()
     val shopDrones = droneViewModel.getAll()
-    val fakePeople = droneViewModel.getAllPeople()
 
     Scaffold { padding ->
         LazyColumn(
@@ -47,32 +46,8 @@ fun DroneShopScreen(droneViewModel: DroneViewModel) {
                 )
             }
 
-            item {
-                Text(
-                    text = "Bounty Targets",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            items(fakePeople.take(5)) { person ->
-                PersonBountyCard(
-                    person = person,
-                    onClick = {
-                        droneViewModel.selectPerson(person.id)
-                    }
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Drone Shop",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            //TODO: filters for price, speed, alphabetized
+            // all of these in descending or ascending order (toggle button)
 
             items(shopDrones) { drone ->
                 DroneCard(

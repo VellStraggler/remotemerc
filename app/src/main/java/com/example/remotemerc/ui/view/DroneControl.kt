@@ -56,10 +56,10 @@ fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
 
 @Composable
 fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit, playerViewModel:PlayerViewModel,
-              explode: () -> Unit) {
+              explode: () -> Unit, gameData: GameData) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
-        DroneScene(getDrone, playerViewModel, explode)
+        DroneScene(getDrone, playerViewModel, explode, gameData)
         DroneUI(onBack, playerViewModel)
     }
 }
@@ -77,15 +77,14 @@ fun DroneUI(onBack: () -> Unit, playerViewModel: PlayerViewModel) {
     }
 }
 @Composable
-fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel, explode: () -> Unit) {
+fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel, explode: () -> Unit, gameData: GameData) {
     val drone = getDrone()
     if (drone != null) {
         Box(Modifier.fillMaxSize().background(Color.White),
             contentAlignment = Alignment.Center) {
-//            Text("Example Scene for drone ${drone.model}")
             GameScreen(
-                rememberEngine(), playerViewModel, GameData(playerViewModel),
-                explode
+                rememberEngine(), playerViewModel, gameData,
+                explode,
             )
         }
     }
@@ -103,7 +102,7 @@ fun DroneControls(playerViewModel: PlayerViewModel) {
         PrimaryButton() //does nothing (kaboom?)
         SecondaryButton({playerViewModel.upAmt = -1f},{playerViewModel.upAmt = 0f})
         JoyStick { x, y ->
-            playerViewModel.turnAmt = x
+            playerViewModel.turnAmt = x * x * x
         }
     }
 }
@@ -153,7 +152,7 @@ fun JoyStick(onMove: (offsetX: Float, offsetY: Float)-> Unit) {
 
 @Composable
 fun SecondaryButton(onHoldStart: () -> Unit, onHoldEnd: () -> Unit) {
-    Box(Modifier.size(20.dp)
+    Box(Modifier.size(30.dp)
         .clip(CircleShape)
         .background(Color.Gray)
         .pointerInput(Unit) {
@@ -171,7 +170,7 @@ fun SecondaryButton(onHoldStart: () -> Unit, onHoldEnd: () -> Unit) {
 }
 @Composable
 fun PrimaryButton() {
-    Box(Modifier.size(40.dp, 12.dp)
+    Box(Modifier.size(50.dp, 20.dp)
         .clip(CircleShape)
         .background(Color.DarkGray))
 }

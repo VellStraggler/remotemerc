@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModel
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 
-const val SPEED_MULT = -0.0002
-const val TURN_MUlT = -0.03f
+const val SPEED_MULT = 0.0002
+const val TURN_MUlT = 0.02f
 const val HEIGHT_MULT = 0.0008f
 
 class PlayerViewModel : ViewModel() {
@@ -26,10 +26,10 @@ class PlayerViewModel : ViewModel() {
     fun update(d: Float) {
         val delta = d / 1000f
         // update rotation from turn input
-        speed = (forwardAcceleration * delta) * SPEED_MULT
+        speed = (-forwardAcceleration * delta) * SPEED_MULT
         rotation = Rotation(
         rotation.x,
-        rotation.y + (turnAmt * delta * TURN_MUlT),
+        rotation.y + (-turnAmt * delta * TURN_MUlT),
         rotation.z
         )
 

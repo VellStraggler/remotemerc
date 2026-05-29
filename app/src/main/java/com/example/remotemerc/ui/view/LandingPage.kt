@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,11 +28,14 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.remotemerc.data.PeopleViewModel
+import com.example.remotemerc.presentation.ui.PersonBountyCard
 
 @Composable
-fun LandingPage(onClickMission: () -> Unit) {
+fun LandingPage(peopleViewModel: PeopleViewModel, onClickMission: () -> Unit) {
     Column() {
         LandingPageTopBar()
+        ImplementThis(peopleViewModel)
         LandingPageCenterSection(onClickMission)
     }
 }
@@ -107,6 +111,32 @@ fun LandingPageListBox(
                         })
                 }
             }
+        }
+    }
+}
+@Composable
+fun ImplementThis(peopleViewModel: PeopleViewModel) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            Text(
+                text = "Bounty Targets",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        items(peopleViewModel.fakePeople.take(5)) { person ->
+            PersonBountyCard(
+                person = person,
+                onClick = {
+                    peopleViewModel.selectPerson(person.id)
+                }
+            )
         }
     }
 }

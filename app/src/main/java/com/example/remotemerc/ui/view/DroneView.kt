@@ -166,10 +166,9 @@ fun GameScreen(
 
                 val d = sqrt(
                     (pit.x - ppos.x) * (pit.x - ppos.x) +
-                            (pit.y - ppos.y) * (pit.y - ppos.y) +
-                            (pit.z - ppos.z) * (pit.z - ppos.z)
+                        (pit.z - ppos.z) * (pit.z - ppos.z)
                 )
-                if (d < 2f) {
+                if (d < 1f && ppos.y < PERSON_HEIGHT + .1f) {
                     Log.d("BOOM", "destroyed a guy")
                     true
                     explode()
