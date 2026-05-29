@@ -23,6 +23,7 @@ import com.example.remotemerc.ui.theme.RemoteMercTheme
 import com.example.remotemerc.ui.view.AppNavHost
 import com.example.remotemerc.ui.view.AppScreen
 import com.example.remotemerc.ui.view.MyNavBar
+import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
             val playerViewModel by viewModels<PlayerViewModel>()
             val peopleViewModel by viewModels<PeopleViewModel>()
             val gameDataViewModel by viewModels<GameDataViewModel>()
+            val profileViewModel by viewModels<ProfileViewModel>()
 
             RemoteMercTheme {
                 val navController = rememberNavController()
@@ -56,7 +58,9 @@ class MainActivity : ComponentActivity() {
                             droneViewModel,
                             playerViewModel,
                             peopleViewModel,
-                            gameDataViewModel)
+                            gameDataViewModel,
+                            profileViewModel
+                            )
                     }
                 }
             }

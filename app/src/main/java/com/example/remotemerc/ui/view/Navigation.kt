@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 sealed class AppScreen(val route: String) {
     data object Landing : AppScreen("landing-page")
@@ -84,7 +85,8 @@ fun AppNavHost(
     droneViewModel: DroneViewModel,
     playerViewModel: PlayerViewModel,
     peopleViewModel: PeopleViewModel,
-    gameDataViewModel: GameDataViewModel
+    gameDataViewModel: GameDataViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     NavHost(
         navController = navController,
@@ -93,6 +95,7 @@ fun AppNavHost(
 
         composable(AppScreen.Landing.route) {
             LandingPage(
+                profileViewModel = profileViewModel,
                 peopleViewModel = peopleViewModel,
                 onClickMission = {
                     navController.navigate(AppScreen.MissionView.route)

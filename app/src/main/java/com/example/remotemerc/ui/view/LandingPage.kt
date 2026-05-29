@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -36,28 +37,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.Button
+import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun LandingPage(
+    profileViewModel: ProfileViewModel,
     peopleViewModel: PeopleViewModel,
     onClickMission: (FakePerson) -> Unit
 ) {
     Column {
-        LandingPageTopBar()
+        LandingPageTopBar(profileViewModel)
         LandingPageCenterSection(peopleViewModel, onClickMission)
     }
 }
 
 @Composable
-fun LandingPageTopBar() {
+fun LandingPageTopBar(profileViewModel: ProfileViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .background(color=Color.LightGray)
-            .padding(start = 10.dp, end = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .height(88.dp)
+            .background(color = Color.LightGray)
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
@@ -69,12 +71,42 @@ fun LandingPageTopBar() {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Profile picture",
-                modifier = Modifier.size(56.dp),
-                tint = Color.Black,
-                )
+                modifier = Modifier.size(42.dp),
+                tint = Color.Black
+            )
         }
-        Text("Score: 900")
-        Text("Money: \$190000")
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column {
+            Text(
+                text = profileViewModel.name,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "Drone Pilot",
+                fontSize = 14.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Column(
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = "Money: $${profileViewModel.cash}",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "Score: ${profileViewModel.score}",
+                fontSize = 14.sp
+            )
+        }
     }
 }
 
