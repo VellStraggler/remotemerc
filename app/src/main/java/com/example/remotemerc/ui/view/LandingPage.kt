@@ -33,9 +33,13 @@ import androidx.compose.ui.unit.sp
 import com.example.remotemerc.data.FakePerson
 import com.example.remotemerc.data.PeopleViewModel
 
+
 @Composable
-fun LandingPage(peopleViewModel: PeopleViewModel, onClickMission: () -> Unit) {
-    Column() {
+fun LandingPage(
+    peopleViewModel: PeopleViewModel,
+    onClickMission: (FakePerson) -> Unit
+) {
+    Column {
         LandingPageTopBar()
         LandingPageCenterSection(peopleViewModel, onClickMission)
     }
@@ -72,8 +76,10 @@ fun LandingPageTopBar() {
 }
 
 @Composable
-fun LandingPageCenterSection(peopleViewModel: PeopleViewModel, onClickMission: () -> Unit) {
-    val placeholderItems = List(3) { "placeholder text" }
+fun LandingPageCenterSection(
+    peopleViewModel: PeopleViewModel,
+    onClickMission: (FakePerson) -> Unit
+) {
     val randomActiveTargets = peopleViewModel.fakePeople.take(5)
     val randomAvailableTargets = peopleViewModel.fakePeople.drop(5).take(5)
     Column(modifier = Modifier
@@ -90,7 +96,7 @@ fun LandingPageCenterSection(peopleViewModel: PeopleViewModel, onClickMission: (
 fun LandingPageListBox(
     title: String,
     rowItems: List<FakePerson>,
-    onRowClick: () -> Unit
+    onRowClick: (FakePerson) -> Unit
 ) {
     Text(text=title,
         fontSize = 24.sp,
@@ -107,12 +113,12 @@ fun LandingPageListBox(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(rowItems) { item ->
-//                    Text(text=item.toString(),
-////                        fontSize = 20.sp,
-//                        modifier = Modifier.clickable {
-//                            onRowClick()
-//                        })
-                    PersonBountyCard(item, onRowClick)
+                    PersonBountyCard(
+                        person = item,
+                        onClick = {
+                            onRowClick(item)
+                        }
+                    )
                 }
             }
         }

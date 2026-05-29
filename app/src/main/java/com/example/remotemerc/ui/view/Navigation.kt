@@ -28,6 +28,10 @@ import com.example.remotemerc.data.FakePerson
 import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PeopleViewModel
 import com.example.remotemerc.data.PlayerViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 sealed class AppScreen(val route: String) {
     data object Landing : AppScreen("landing-page")
@@ -82,7 +86,9 @@ fun AppNavHost(
     peopleViewModel: PeopleViewModel,
     gameDataViewModel: GameDataViewModel
 ) {
-
+    var selectedTarget by remember {
+        mutableStateOf<FakePerson?>(null)
+    }
     NavHost(
         navController = navController,
         startDestination = AppScreen.Landing.route
@@ -90,9 +96,10 @@ fun AppNavHost(
 
         composable(AppScreen.Landing.route) {
             LandingPage(
-                peopleViewModel,
-                onClickMission = {
-                    navController.navigate("mission-view")
+                peopleViewModel = peopleViewModel,
+                onClickMission = { person ->
+                    selectedTarget = person
+                    navController.navigate(AppScreen.MissionView.route)
                 }
             )
         }
@@ -121,7 +128,9 @@ fun AppNavHost(
         }
 
         composable(AppScreen.MissionView.route) {
-            MissionProfilePage(FakePerson(1, "Joe Bob", "Atlanta", 69))
+            selectedTarget?.let { target ->
+                MissionProfilePage(target)
+            }
         }
     }
 }
