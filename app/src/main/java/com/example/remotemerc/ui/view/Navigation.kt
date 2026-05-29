@@ -86,9 +86,6 @@ fun AppNavHost(
     peopleViewModel: PeopleViewModel,
     gameDataViewModel: GameDataViewModel
 ) {
-    var selectedTarget by remember {
-        mutableStateOf<FakePerson?>(null)
-    }
     NavHost(
         navController = navController,
         startDestination = AppScreen.Landing.route
@@ -97,8 +94,7 @@ fun AppNavHost(
         composable(AppScreen.Landing.route) {
             LandingPage(
                 peopleViewModel = peopleViewModel,
-                onClickMission = { person ->
-                    selectedTarget = person
+                onClickMission = {
                     navController.navigate(AppScreen.MissionView.route)
                 }
             )
@@ -128,9 +124,7 @@ fun AppNavHost(
         }
 
         composable(AppScreen.MissionView.route) {
-            selectedTarget?.let { target ->
-                MissionProfilePage(target)
-            }
+                MissionProfilePage(peopleViewModel)
         }
     }
 }

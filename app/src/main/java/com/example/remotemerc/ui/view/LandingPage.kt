@@ -2,7 +2,6 @@ package com.example.remotemerc.ui.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.remotemerc.data.FakePerson
 import com.example.remotemerc.data.PeopleViewModel
-
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.material3.Button
 
 @Composable
 fun LandingPage(
@@ -80,15 +83,26 @@ fun LandingPageCenterSection(
     peopleViewModel: PeopleViewModel,
     onClickMission: (FakePerson) -> Unit
 ) {
-    val randomActiveTargets = peopleViewModel.fakePeople.take(5)
-    val randomAvailableTargets = peopleViewModel.fakePeople.drop(5).take(5)
     Column(modifier = Modifier
         .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        LandingPageListBox("Active Missions", randomActiveTargets, onClickMission)
-        LandingPageListBox("Available Missions", randomAvailableTargets, onClickMission)
+        LandingPageListBox(
+            title = "Active Missions",
+            rowItems = peopleViewModel.getMyPeople(),
+            onRowClick = { person ->
+                peopleViewModel.selectPerson(person.id)
+                onClickMission(person)
+            }
+        )
+        AvailableMissionsListBox(
+            title = "Available Missions",
+            rowItems = peopleViewModel.getAvailablePeople(),
+            onAccept = { person ->
+                peopleViewModel.acceptPerson(person)
+            }
+        )
     }
 }
 
@@ -162,6 +176,70 @@ fun PersonBountyCard(
                     text = person.location,
                     fontSize = 14.sp
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun AvailableMissionsListBox(
+    title: String,
+    rowItems: List<FakePerson>,
+    onAccept: (FakePerson) -> Unit
+) {
+    var selectedPerson by remember {
+        mutableStateOf<FakePerson?>(null)
+    }
+
+    Text(
+        text = title,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .height(170.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(rowItems) { person ->
+                Column {
+                    PersonBountyCard(
+                        person = person,
+                        onClick = {
+                            selectedPerson = person
+                        }
+                    )
+
+                    if (selectedPerson?.id == person.id) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(
+                                onClick = {
+                                    selectedPerson = null
+                                }
+                            ) {
+                                Text("Reject")
+                            }
+
+                            Button(
+                                onClick = {
+                                    onAccept(person)
+                                    selectedPerson = null
+                                }
+                            ) {
+                                Text("Accept")
+                            }
+                        }
+                    }
+                }
             }
         }
     }

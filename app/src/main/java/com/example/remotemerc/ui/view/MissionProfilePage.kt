@@ -25,10 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.remotemerc.R
-import com.example.remotemerc.data.FakePerson
+import com.example.remotemerc.data.PeopleViewModel
 
 @Composable
-fun MissionProfilePage(target: FakePerson) {
+fun MissionProfilePage(peopleViewModel: PeopleViewModel) {
+
+    val target = peopleViewModel.getSelectedPerson()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
