@@ -4,14 +4,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.remotemerc.ui.view.DroneSortAttribute
+import com.example.remotemerc.ui.view.SortDirection
 
 class DroneViewModel : ViewModel() {
 
-    public var selectedDroneId by mutableIntStateOf(-1)
+    var selectedDroneId by mutableIntStateOf(-1)
 
     var cash by mutableDoubleStateOf(190000.0)
+        private set
+
+    var selectedSortAttribute by mutableStateOf(DroneSortAttribute.PRICE)
+        private set
+
+    var selectedSortDirection by mutableStateOf(SortDirection.ASCENDING)
         private set
 
     private val fakeDroneRepo = FakeDroneRepo()
@@ -32,6 +41,51 @@ class DroneViewModel : ViewModel() {
 
     fun getAll(): List<Drone> {
         return shopDrones.toList()
+    }
+
+    fun getSortedShopDrones(): List<Drone> {
+        val sortedDrones = when (selectedSortAttribute) {
+            DroneSortAttribute.NAME -> shopDrones.sortedBy { drone ->
+                drone.model
+            }
+
+            DroneSortAttribute.PRICE -> shopDrones.sortedBy { drone ->
+                drone.priceUSD
+            }
+
+            DroneSortAttribute.WEIGHT -> shopDrones.sortedBy { drone ->
+                drone.weightOz
+            }
+
+            DroneSortAttribute.SPEED -> shopDrones.sortedBy { drone ->
+                drone.topSpeedMph
+            }
+
+            DroneSortAttribute.ALTITUDE -> shopDrones.sortedBy { drone ->
+                drone.maxAltitude
+            }
+
+            DroneSortAttribute.BATTERY -> shopDrones.sortedBy { drone ->
+                drone.batteryLifeSeconds
+            }
+
+            DroneSortAttribute.TNT -> shopDrones.sortedBy { drone ->
+                drone.tntGrams
+            }
+        }
+
+        return when (selectedSortDirection) {
+            SortDirection.ASCENDING -> sortedDrones
+            SortDirection.DESCENDING -> sortedDrones.reversed()
+        }
+    }
+
+    fun updateSortAttribute(attribute: DroneSortAttribute) {
+        selectedSortAttribute = attribute
+    }
+
+    fun updateSortDirection(direction: SortDirection) {
+        selectedSortDirection = direction
     }
 
     fun getAllOwned(): List<Drone> {
