@@ -28,15 +28,15 @@ class DroneViewModel : ViewModel() {
     var shopDrones = mutableStateListOf<Drone>()
         private set
 
-    var myDrones = mutableStateListOf<Drone>()
+    var myDrones = mutableStateListOf<LaunchedDrone>()
         private set
 
     init {
         fakeDroneRepo.generateDrones(100)
         shopDrones.addAll(fakeDroneRepo.getAll())
 
-//        val starterDrone = fakeDroneRepo.generateDrone()
-//        myDrones.add(starterDrone)
+        val starterDrone = fakeDroneRepo.generateDrone()
+        myDrones.add(starterDrone.launched())
     }
 
     fun getAll(): List<Drone> {
@@ -88,11 +88,11 @@ class DroneViewModel : ViewModel() {
         selectedSortDirection = direction
     }
 
-    fun getAllOwned(): List<Drone> {
+    fun getAllOwned(): List<LaunchedDrone> {
         return myDrones.toList()
     }
 
-    fun getDroneById(id: Int): Drone? {
+    fun getDroneById(id: Int): IDrone? {
         return shopDrones.firstOrNull { drone ->
             drone.id == id
         } ?: myDrones.firstOrNull { drone ->
@@ -104,7 +104,7 @@ class DroneViewModel : ViewModel() {
         selectedDroneId = id
     }
 
-    fun getSelected(): Drone? {
+    fun getSelected(): IDrone? {
         return getDroneById(selectedDroneId)
     }
 
@@ -126,7 +126,7 @@ class DroneViewModel : ViewModel() {
         }
 
         cash -= droneToBuy.priceUSD
-        myDrones.add(droneToBuy)
+        myDrones.add(droneToBuy.launched())
         shopDrones.remove(droneToBuy)
 
         return true

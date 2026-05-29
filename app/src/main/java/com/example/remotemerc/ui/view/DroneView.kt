@@ -1,6 +1,5 @@
 package com.example.remotemerc.ui.view
 
-import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,13 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PersonOrientation
 import com.example.remotemerc.data.PlayerViewModel
 import com.google.android.filament.Engine
 import com.google.android.filament.Material
-import com.google.android.filament.Skybox
 import com.google.android.filament.gltfio.FilamentInstance
 import io.github.sceneview.SceneView
 import io.github.sceneview.geometries.Plane
@@ -25,10 +22,10 @@ import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
+import io.github.sceneview.node.CylinderNode
 import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
-import io.github.sceneview.rememberScene
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -41,22 +38,24 @@ fun GameScreen(
     engine: Engine,
     playerViewModel: PlayerViewModel,
     data: GameDataViewModel,
-    explode: () -> Unit,
-    context: Context = LocalContext.current
+    explode: () -> Unit
 ) {
     Log.d("RECOMP", "GameScreen recomposed")
-
-    val scene = rememberScene(engine)
 
     val materialLoader = rememberMaterialLoader(engine)
     val modelLoader = rememberModelLoader(engine)
 
     val cameraNode = rememberCameraNode(engine).apply {
-        position = playerViewModel.camPos
-        lookAt(playerViewModel.position)
+        position = playerViewModel.position
+        rotation = playerViewModel.rotation
     }
+    val green = Color.argb(1f,0.05f,0.4f,0.1f)
+    val darkGreen = Color.argb(1f,0f,0.25f,0f)
     val greenMaterial = remember {materialLoader.createColorInstance(
-        Color.argb(1f,0.15f,0.6f,0.15f)
+        green
+    ) }
+    val shadowMaterial = remember {materialLoader.createUnlitColorInstance(
+        darkGreen
     ) }
     val skyMaterial = remember {materialLoader.createUnlitColorInstance(
         Color.argb(1f, 0.2f, 0.4f, 1f)
@@ -82,21 +81,8 @@ fun GameScreen(
         // built-in frame-perfect function
         onFrame = { frameTimeNanos ->
             playerViewModel.update(frameTimeNanos/ 1_000_000_000f)
-
-            val baseYaw = Math.toRadians(playerViewModel.rotation.y.toDouble())
-
-            val forwardX = sin(baseYaw).toFloat()
-            val forwardZ = cos(baseYaw).toFloat()
-
-            val lookPos = Position(
-                playerViewModel.position.x + forwardX,
-                playerViewModel.position.y,
-                playerViewModel.position.z + forwardZ
-            )
-            playerViewModel.camPos = lookPos
-
-            cameraNode.position = playerViewModel.camPos
-            cameraNode.lookAt(playerViewModel.position)
+            cameraNode.position = playerViewModel.position
+            cameraNode.rotation = playerViewModel.rotation
 
 
             // collision and billboard logic
@@ -168,5 +154,12 @@ fun GameScreen(
                 scale = Scale(TREE_SCALE)
             )
         }
+        // drone shadow
+        CylinderNode(
+            radius = 0.5f,
+            height = 0.1f,
+            position = playerViewModel.shadowPosition,
+            materialInstance = shadowMaterial
+        )
     }
 }

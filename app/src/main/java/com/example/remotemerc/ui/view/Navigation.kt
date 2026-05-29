@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.remotemerc.data.LaunchedDrone
 import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 sealed class AppScreen(val route: String) {
@@ -112,7 +113,7 @@ fun AppNavHost(
         }
 
         composable(AppScreen.DroneView.route) {
-            DroneView({droneViewModel.getSelected()}, {
+            DroneView({ droneViewModel.getSelected() as LaunchedDrone? }, {
                 droneViewModel.selectedDroneId = -1
                 navController.navigate("drone-control")
             },

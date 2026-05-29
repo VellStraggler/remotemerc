@@ -1,5 +1,6 @@
 package com.example.remotemerc.ui.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,6 +48,7 @@ import com.example.remotemerc.data.Drone
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
 import com.example.remotemerc.data.GameDataViewModel
+import com.example.remotemerc.data.LaunchedDrone
 import com.example.remotemerc.data.PlayerViewModel
 import io.github.sceneview.rememberEngine
 
@@ -57,7 +59,7 @@ fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
 }
 
 @Composable
-fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit, playerViewModel:PlayerViewModel,
+fun DroneView(getDrone: () -> LaunchedDrone?, onBack: () -> Unit, playerViewModel:PlayerViewModel,
               explode: () -> Unit, gameDataViewModel: GameDataViewModel) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
@@ -79,9 +81,10 @@ fun DroneUI(onBack: () -> Unit, playerViewModel: PlayerViewModel) {
     }
 }
 @Composable
-fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel, explode: () -> Unit, gameDataViewModel: GameDataViewModel) {
+fun DroneScene(getDrone: () -> LaunchedDrone?, playerViewModel: PlayerViewModel, explode: () -> Unit, gameDataViewModel: GameDataViewModel) {
     val drone = getDrone()
     if (drone != null) {
+        playerViewModel.initDroneStats(drone)
         Box(Modifier.fillMaxSize().background(Color.White),
             contentAlignment = Alignment.Center) {
             GameScreen(
@@ -97,16 +100,20 @@ fun DroneControls(playerViewModel: PlayerViewModel) {
     Row(Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom){
+
         JoyStick {x, y ->
-            playerViewModel.forwardInput = y
-            playerViewModel.sideInput = x
-        }
-        SecondaryButton({playerViewModel.upAmt = 1f}, {playerViewModel.upAmt = 0f})
-        PrimaryButton()
-        SecondaryButton({playerViewModel.upAmt = -1f},{playerViewModel.upAmt = 0f})
-        JoyStick { x, y ->
+            playerViewModel.downInput = y * y * y
             playerViewModel.turnInput = x * x * x
-            playerViewModel.pitchInput= y * y * y
+        }
+        SecondaryButton({playerViewModel.hoverMode = !playerViewModel.hoverMode}, )
+        PrimaryButton()
+        SecondaryButton({
+            playerViewModel.cameraMode = !playerViewModel.cameraMode
+            Log.d("DEBUG", "HE TAPPED! Camera Mode set to ${playerViewModel.cameraMode}")
+        })
+        JoyStick { x, y ->
+            playerViewModel.forwardInput= y * y * y
+            playerViewModel.sideInput = x * x * x
         }
     }
 }
@@ -159,7 +166,8 @@ fun JoyStick(onMove: (offsetX: Float, offsetY: Float)-> Unit) {
 }
 
 @Composable
-fun SecondaryButton(onHoldStart: () -> Unit, onHoldEnd: () -> Unit) {
+fun SecondaryButton(onHoldStart: () -> Unit = {},
+                    onHoldEnd: () -> Unit = {}) {
     Box(Modifier.size(30.dp)
         .clip(CircleShape)
         .background(Color.Gray)
@@ -185,7 +193,7 @@ fun PrimaryButton() {
 
 @Composable
 fun DroneFleet(droneViewModel: DroneViewModel, navController: NavHostController) {
-    val drones: List<Drone> by remember { mutableStateOf(droneViewModel.getAllOwned()) }
+    val drones: List<LaunchedDrone> by remember { mutableStateOf(droneViewModel.getAllOwned()) }
 
     Column(Modifier.fillMaxSize()
         .background(Color.DarkGray)
@@ -211,7 +219,7 @@ fun DroneFleet(droneViewModel: DroneViewModel, navController: NavHostController)
 }
 
 @Composable
-fun DroneCard(drone: Drone, onClick: () -> Unit) {
+fun DroneCard(drone: LaunchedDrone, onClick: () -> Unit) {
     Box(Modifier.size(120.dp)
         .clickable {
             onClick()
@@ -233,7 +241,7 @@ fun DroneCard(drone: Drone, onClick: () -> Unit) {
 }
 
 @Composable
-fun HighlightedDroneCard(drone: Drone, onClick:() -> Unit) {
+fun HighlightedDroneCard(drone: LaunchedDrone, onClick:() -> Unit) {
     Box(Modifier.size(120.dp)
         .border(2.dp, Color.White)
     ) {
