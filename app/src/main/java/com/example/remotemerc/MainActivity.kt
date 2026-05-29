@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.data.FakeDroneRepo
 import com.example.remotemerc.data.FakePeopleRepo
-import com.example.remotemerc.data.GameData
+import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PeopleViewModel
 import com.example.remotemerc.data.PlayerViewModel
 import com.example.remotemerc.ui.theme.RemoteMercTheme
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
             val droneViewModel by viewModels<DroneViewModel>()
             val playerViewModel by viewModels<PlayerViewModel>()
             val peopleViewModel by viewModels<PeopleViewModel>()
-            val gameData = GameData(playerViewModel)
+            val gameDataViewModel by viewModels<GameDataViewModel>()
 
             RemoteMercTheme {
                 val navController = rememberNavController()
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             droneViewModel,
                             playerViewModel,
                             peopleViewModel,
-                            gameData)
+                            gameDataViewModel)
                     }
                 }
             }

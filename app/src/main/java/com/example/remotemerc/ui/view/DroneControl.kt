@@ -36,15 +36,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.remotemerc.data.Drone
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
-import com.example.remotemerc.data.GameData
+import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PlayerViewModel
 import io.github.sceneview.rememberEngine
 
@@ -56,10 +58,10 @@ fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
 
 @Composable
 fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit, playerViewModel:PlayerViewModel,
-              explode: () -> Unit, gameData: GameData) {
+              explode: () -> Unit, gameDataViewModel: GameDataViewModel) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
-        DroneScene(getDrone, playerViewModel, explode, gameData)
+        DroneScene(getDrone, playerViewModel, explode, gameDataViewModel)
         DroneUI(onBack, playerViewModel)
     }
 }
@@ -77,13 +79,13 @@ fun DroneUI(onBack: () -> Unit, playerViewModel: PlayerViewModel) {
     }
 }
 @Composable
-fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel, explode: () -> Unit, gameData: GameData) {
+fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel, explode: () -> Unit, gameDataViewModel: GameDataViewModel) {
     val drone = getDrone()
     if (drone != null) {
         Box(Modifier.fillMaxSize().background(Color.White),
             contentAlignment = Alignment.Center) {
             GameScreen(
-                rememberEngine(), playerViewModel, gameData,
+                rememberEngine(), playerViewModel, gameDataViewModel,
                 explode,
             )
         }
@@ -112,8 +114,9 @@ fun JoyStick(onMove: (offsetX: Float, offsetY: Float)-> Unit) {
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
 
-    val diameter = 100f
-    Box(Modifier.size(diameter.dp)
+    val density = LocalDensity.current
+    val diameterPx = with(density) {100.dp.toPx()}
+    Box(Modifier.size(100.dp)
         .clip(CircleShape)
         .background(Color(0.5f, 0.5f, 0.5f, 0.3f))
         .pointerInput(Unit) {
@@ -129,7 +132,7 @@ fun JoyStick(onMove: (offsetX: Float, offsetY: Float)-> Unit) {
                 offsetX += dragAmount.x
                 offsetY += dragAmount.y
 
-                val maxRadius = diameter/2
+                val maxRadius = diameterPx/2
 
                 val distance = kotlin.math.sqrt(offsetX * offsetX + offsetY * offsetY)
                 if (distance > maxRadius) {
@@ -142,8 +145,11 @@ fun JoyStick(onMove: (offsetX: Float, offsetY: Float)-> Unit) {
             }}
         ,
         contentAlignment = Alignment.Center) {
-        Box(Modifier.size(10.dp)
-            .offset(offsetX.dp, offsetY.dp)
+        Box(Modifier
+            .size(15.dp)
+            .offset {
+                IntOffset(offsetX.toInt(), offsetY.toInt())
+            }
             .clip(CircleShape)
             .background(Color.Black)
         )

@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.remotemerc.data.PeopleViewModel
-import com.example.remotemerc.presentation.ui.PersonBountyCard
 
 @Composable
 fun LandingPage(peopleViewModel: PeopleViewModel, onClickMission: () -> Unit) {

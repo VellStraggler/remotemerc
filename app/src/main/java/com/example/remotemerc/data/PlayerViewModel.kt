@@ -19,14 +19,25 @@ class PlayerViewModel : ViewModel() {
     var forwardAcceleration: Float by mutableFloatStateOf(0f)
     var upAmt: Float by mutableFloatStateOf(0f)
     var turnAmt: Float by mutableFloatStateOf(0f)
-    var position = (Position(0f,0f,0f))
+    var position = (Position(0f,0.1f,0f))
+        private set
     var rotation = Rotation(0f,0f,0f)
         private set
+
+    // should be placed slightly behind the player position
+    var camPos = Position(position.x,
+        position.y + 1.0f,
+        position.z + 1.0f)
+
+    fun reset() {
+        position = Position(0f,0.1f,0f)
+        rotation = Rotation(0f,0f,0f)
+    }
 
     fun update(d: Float) {
         val delta = d / 1000f
         // update rotation from turn input
-        speed = (-forwardAcceleration * delta) * SPEED_MULT
+        speed = (forwardAcceleration * delta) * SPEED_MULT
         rotation = Rotation(
         rotation.x,
         rotation.y + (-turnAmt * delta * TURN_MUlT),

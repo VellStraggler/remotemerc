@@ -25,10 +25,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
 import com.example.remotemerc.data.FakePerson
-import com.example.remotemerc.data.GameData
+import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PeopleViewModel
 import com.example.remotemerc.data.PlayerViewModel
-import com.example.remotemerc.presentation.ui.DroneShopScreen
 
 sealed class AppScreen(val route: String) {
     data object Landing : AppScreen("landing-page")
@@ -81,7 +80,7 @@ fun AppNavHost(
     droneViewModel: DroneViewModel,
     playerViewModel: PlayerViewModel,
     peopleViewModel: PeopleViewModel,
-    gameData: GameData
+    gameDataViewModel: GameDataViewModel
 ) {
 
     NavHost(
@@ -114,11 +113,11 @@ fun AppNavHost(
                 playerViewModel, {
                 // explode
                 Log.d("DEAD", "target eliminated")
-                playerViewModel.position = io.github.sceneview.math.Position(0f, 0f, 0f)
+                playerViewModel.reset()
                 droneViewModel.removeSelected()
                 navController.navigate("drone-control")
 
-            }, gameData)
+            }, gameDataViewModel)
         }
 
         composable(AppScreen.MissionView.route) {
