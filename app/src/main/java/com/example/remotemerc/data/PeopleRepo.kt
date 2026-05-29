@@ -39,10 +39,10 @@ class FakePeopleRepo {
         val bountyBase = rng.nextInt(100)
         val bounty = when(bountyBase) {
             // multiples of 100 only
-            in 0..49 -> (190..400).random(rng) * 100
-            in 50..79-> (400..900).random(rng) * 100
-            in 80..95-> (900..1800).random(rng) * 100
-            else -> (1800..50000).random(rng) * 100
+            in 0..49 -> (10..100).random(rng) * 100
+            in 50..79-> (100..400).random(rng) * 100
+            in 80..95-> (400..1000).random(rng) * 100
+            else -> (1000..5000).random(rng) * 100
         }
 
         val newPerson = FakePerson(idInc, name, town, bounty)

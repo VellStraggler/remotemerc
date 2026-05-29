@@ -3,7 +3,6 @@ package com.example.remotemerc.data
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import io.github.sceneview.math.Position
@@ -16,9 +15,12 @@ const val HEIGHT_MULT = 0.0008f
 class PlayerViewModel : ViewModel() {
 
     var speed: Double by mutableDoubleStateOf(0.0)
-    var forwardAcceleration: Float by mutableFloatStateOf(0f)
+    var forwardInput: Float by mutableFloatStateOf(0f)
+    var sideInput: Float by mutableFloatStateOf(0f)
+    var sideSpeed: Double by mutableDoubleStateOf(0.0)
     var upAmt: Float by mutableFloatStateOf(0f)
-    var turnAmt: Float by mutableFloatStateOf(0f)
+    var turnInput: Float by mutableFloatStateOf(0f)
+    var pitchInput: Float by mutableFloatStateOf(0f)
     var position = (Position(0f,0.1f,0f))
         private set
     var rotation = Rotation(0f,0f,0f)
@@ -37,10 +39,12 @@ class PlayerViewModel : ViewModel() {
     fun update(d: Float) {
         val delta = d / 1000f
         // update rotation from turn input
-        speed = (forwardAcceleration * delta) * SPEED_MULT
+        speed = (forwardInput * delta) * SPEED_MULT
+        sideSpeed= (sideInput * delta) * SPEED_MULT
+
         rotation = Rotation(
-        rotation.x,
-        rotation.y + (-turnAmt * delta * TURN_MUlT),
+        rotation.x + (pitchInput * delta * TURN_MUlT),
+        rotation.y + (-turnInput * delta * TURN_MUlT),
         rotation.z
         )
 
@@ -51,9 +55,15 @@ class PlayerViewModel : ViewModel() {
         val dirZ = kotlin.math.cos(Math.toRadians(newYaw.toDouble())).toFloat()
 
         position = Position(
-            (position.x + dirX * speed * delta).toFloat(),
+            (position.x +
+                    (dirX * speed * delta) +
+                    (dirZ * sideSpeed * delta)
+                    ).toFloat(),
             (position.y + upAmt * delta * HEIGHT_MULT),
-            (position.z + dirZ * speed * delta).toFloat()
+            (position.z +
+                    (dirZ * speed * delta) +
+                    (dirX * sideSpeed * delta)
+                    ).toFloat()
         )
     }
 }

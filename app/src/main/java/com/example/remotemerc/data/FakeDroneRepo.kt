@@ -77,21 +77,22 @@ class FakeDroneRepo {
 
         val model = parts.joinToString("-")
 
-        val batteryLifeSeconds =    rng.nextInt(1, 360) * 100
-        val topSpeedMph =           rng.nextInt(200,3000) / 10.0
-        val maxAltitude =           rng.nextInt(1, 100) * 100
-        val weightOz =              rng.nextInt(10, 10000) / 10.0
+        val batteryLifeSeconds =    rng.nextInt(1, 120) * 10
+        val topSpeedMph =           rng.nextInt(100,3000) / 10.0
+        val maxAltitude =           rng.nextInt(1, 100) * 10
+        val weightOz =              rng.nextInt(10, 10000) / 10.0 + (batteryLifeSeconds /100.0)
         val tntGrams =              rng.nextInt(5, (weightOz*5).toInt()-4) / 10.0
-//        val dim =                   rng.nextInt(10, 240) / 10.0
         val dim = (weightOz.pow(.33) * 10).toInt() / 10.0
         val dimensionsInches = listOf(dim, ((dim*2.5).toInt()/10.0), dim)
 
-        val priceUSD = (( (batteryLifeSeconds) +
-                (topSpeedMph*10) +
-                (maxAltitude/50) +
+        val priceUSD = ((
+                (batteryLifeSeconds*batteryLifeSeconds/50) +
+                (topSpeedMph*topSpeedMph) +
+                (maxAltitude/5) +
                 (0.1/weightOz) +
-                (tntGrams*10) +
-                (0.1/dim) )*20).toInt() / 100.0
+                (tntGrams*20) +
+                (0.1/dim)
+                ) * 20 ).toInt() / 100.0
 
         val newDrone = Drone(
             idInc, model, priceUSD, weightOz, topSpeedMph,

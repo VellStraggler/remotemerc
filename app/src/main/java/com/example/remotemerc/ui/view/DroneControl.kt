@@ -98,13 +98,15 @@ fun DroneControls(playerViewModel: PlayerViewModel) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom){
         JoyStick {x, y ->
-               playerViewModel.forwardAcceleration = y
+            playerViewModel.forwardInput = y
+            playerViewModel.sideInput = x
         }
         SecondaryButton({playerViewModel.upAmt = 1f}, {playerViewModel.upAmt = 0f})
-        PrimaryButton() //does nothing (kaboom?)
+        PrimaryButton()
         SecondaryButton({playerViewModel.upAmt = -1f},{playerViewModel.upAmt = 0f})
         JoyStick { x, y ->
-            playerViewModel.turnAmt = x * x * x
+            playerViewModel.turnInput = x * x * x
+            playerViewModel.pitchInput= y * y * y
         }
     }
 }

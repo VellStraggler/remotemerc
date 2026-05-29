@@ -14,7 +14,7 @@ class DroneViewModel : ViewModel() {
 
     var selectedDroneId by mutableIntStateOf(-1)
 
-    var cash by mutableDoubleStateOf(190000.0)
+    var cash by mutableDoubleStateOf(900.0)
         private set
 
     var selectedSortAttribute by mutableStateOf(DroneSortAttribute.PRICE)
@@ -35,8 +35,8 @@ class DroneViewModel : ViewModel() {
         fakeDroneRepo.generateDrones(100)
         shopDrones.addAll(fakeDroneRepo.getAll())
 
-        val starterDrone = fakeDroneRepo.generateDrone()
-        myDrones.add(starterDrone)
+//        val starterDrone = fakeDroneRepo.generateDrone()
+//        myDrones.add(starterDrone)
     }
 
     fun getAll(): List<Drone> {

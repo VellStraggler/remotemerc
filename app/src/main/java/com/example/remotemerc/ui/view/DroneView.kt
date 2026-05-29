@@ -17,6 +17,7 @@ import com.example.remotemerc.data.PersonOrientation
 import com.example.remotemerc.data.PlayerViewModel
 import com.google.android.filament.Engine
 import com.google.android.filament.Material
+import com.google.android.filament.Skybox
 import com.google.android.filament.gltfio.FilamentInstance
 import io.github.sceneview.SceneView
 import io.github.sceneview.geometries.Plane
@@ -27,6 +28,7 @@ import io.github.sceneview.math.Size
 import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
+import io.github.sceneview.rememberScene
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -43,6 +45,9 @@ fun GameScreen(
     context: Context = LocalContext.current
 ) {
     Log.d("RECOMP", "GameScreen recomposed")
+
+    val scene = rememberScene(engine)
+
     val materialLoader = rememberMaterialLoader(engine)
     val modelLoader = rememberModelLoader(engine)
 
@@ -131,6 +136,7 @@ fun GameScreen(
 
         }
     ) {
+
         //test people
         data.people.forEach {
             ImageNode(
@@ -141,17 +147,16 @@ fun GameScreen(
                 center = Plane.DEFAULT_CENTER,
             )
         }
-
+        // Ground
         PlaneNode(
             size = Size(550f,550f),
             position = Position(0f,0f,0f),
             rotation = Rotation(-90f,0f, 0f),
             materialInstance = greenMaterial
         )
+        // Skybox
         CubeNode(
             size = Size(600f),
-            position = Position(0f,0f,0f),
-            rotation = Rotation(90f,0f, 0f),
             materialInstance = skyMaterial
         )
 
