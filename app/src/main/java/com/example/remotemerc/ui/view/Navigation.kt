@@ -1,5 +1,6 @@
 package com.example.remotemerc.ui.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -105,7 +106,14 @@ fun AppNavHost(
                 droneViewModel.selectedDroneId = -1
                 navController.navigate("drone-control")
             },
-                playerViewModel)
+                playerViewModel) {
+                // explode
+                Log.d("DEAD", "target eliminated")
+                playerViewModel.position = io.github.sceneview.math.Position(0f, 0f, 0f)
+                droneViewModel.removeSelected()
+                navController.navigate("drone-control")
+
+            }
         }
 
         composable(AppScreen.MissionView.route) {

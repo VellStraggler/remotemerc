@@ -19,7 +19,7 @@ class PlayerViewModel : ViewModel() {
     var forwardAcceleration: Float by mutableFloatStateOf(0f)
     var upAmt: Float by mutableFloatStateOf(0f)
     var turnAmt: Float by mutableFloatStateOf(0f)
-    var position by mutableStateOf(Position(0f,0f,0f))
+    var position = (Position(0f,0f,0f))
     var rotation = Rotation(0f,0f,0f)
         private set
 

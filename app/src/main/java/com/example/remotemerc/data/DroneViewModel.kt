@@ -82,6 +82,11 @@ class DroneViewModel : ViewModel() {
         return getPersonById(selectedPersonId)
     }
 
+    fun removeSelected() {
+        myDrones.remove(getSelected())
+        selectedPersonId = -1
+    }
+
     fun purchaseById(id: Int) {
         attemptPurchase(id)
     }

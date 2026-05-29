@@ -55,10 +55,11 @@ fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
 }
 
 @Composable
-fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit, playerViewModel:PlayerViewModel) {
+fun DroneView(getDrone: () -> Drone?, onBack: () -> Unit, playerViewModel:PlayerViewModel,
+              explode: () -> Unit) {
     Box(Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
-        DroneScene(getDrone, playerViewModel)
+        DroneScene(getDrone, playerViewModel, explode)
         DroneUI(onBack, playerViewModel)
     }
 }
@@ -76,14 +77,15 @@ fun DroneUI(onBack: () -> Unit, playerViewModel: PlayerViewModel) {
     }
 }
 @Composable
-fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel) {
+fun DroneScene(getDrone: () -> Drone?, playerViewModel: PlayerViewModel, explode: () -> Unit) {
     val drone = getDrone()
     if (drone != null) {
         Box(Modifier.fillMaxSize().background(Color.White),
             contentAlignment = Alignment.Center) {
 //            Text("Example Scene for drone ${drone.model}")
             GameScreen(
-                rememberEngine(), playerViewModel, GameData(playerViewModel)
+                rememberEngine(), playerViewModel, GameData(playerViewModel),
+                explode
             )
         }
     }
