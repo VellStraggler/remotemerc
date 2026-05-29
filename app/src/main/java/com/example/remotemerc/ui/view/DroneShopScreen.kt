@@ -243,45 +243,6 @@ fun SortDirectionDropdown(
 }
 
 @Composable
-fun PersonBountyCard(
-    person: FakePerson,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(95.dp),
-        border = BorderStroke(2.dp, Color.Black),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = onClick
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = person.fullName,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = person.location,
-                fontSize = 14.sp
-            )
-
-            Text(
-                text = "Bounty: $${person.bounty}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
-
-@Composable
 fun DroneCard(
     drone: Drone,
     canAfford: Boolean,

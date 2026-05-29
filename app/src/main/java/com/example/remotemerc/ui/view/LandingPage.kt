@@ -1,5 +1,6 @@
 package com.example.remotemerc.ui.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,19 +24,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.remotemerc.data.FakePerson
 import com.example.remotemerc.data.PeopleViewModel
 
 @Composable
 fun LandingPage(peopleViewModel: PeopleViewModel, onClickMission: () -> Unit) {
     Column() {
         LandingPageTopBar()
-        ImplementThis(peopleViewModel)
-        LandingPageCenterSection(onClickMission)
+        LandingPageCenterSection(peopleViewModel, onClickMission)
     }
 }
 
@@ -70,22 +72,24 @@ fun LandingPageTopBar() {
 }
 
 @Composable
-fun LandingPageCenterSection(onClickMission: () -> Unit) {
+fun LandingPageCenterSection(peopleViewModel: PeopleViewModel, onClickMission: () -> Unit) {
     val placeholderItems = List(3) { "placeholder text" }
+    val randomActiveTargets = peopleViewModel.fakePeople.take(5)
+    val randomAvailableTargets = peopleViewModel.fakePeople.drop(5).take(5)
     Column(modifier = Modifier
         .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(25.dp))
-        LandingPageListBox("Active Missions", placeholderItems, onClickMission)
-        LandingPageListBox("Available Missions", placeholderItems, onClickMission)
+        Spacer(modifier = Modifier.height(16.dp))
+        LandingPageListBox("Active Missions", randomActiveTargets, onClickMission)
+        LandingPageListBox("Available Missions", randomAvailableTargets, onClickMission)
     }
 }
 
 @Composable
 fun LandingPageListBox(
     title: String,
-    rowItems: List<String>,
+    rowItems: List<FakePerson>,
     onRowClick: () -> Unit
 ) {
     Text(text=title,
@@ -95,7 +99,7 @@ fun LandingPageListBox(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .height(150.dp)
+            .height(170.dp)
     ) {
         Column {
             LazyColumn (
@@ -103,39 +107,56 @@ fun LandingPageListBox(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(rowItems) { item ->
-                    Text(text=item,
-                        fontSize = 20.sp,
-                        modifier = Modifier.clickable {
-                            onRowClick()
-                        })
+//                    Text(text=item.toString(),
+////                        fontSize = 20.sp,
+//                        modifier = Modifier.clickable {
+//                            onRowClick()
+//                        })
+                    PersonBountyCard(item, onRowClick)
                 }
             }
         }
     }
 }
+
 @Composable
-fun ImplementThis(peopleViewModel: PeopleViewModel) {
-    LazyColumn(
+fun PersonBountyCard(
+    person: FakePerson,
+    onClick: () -> Unit
+) {
+    Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .fillMaxWidth()
+            .height(65.dp),
+        border = BorderStroke(2.dp, Color.Black),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = onClick
     ) {
-        item {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 10.dp, end = 10.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
-                text = "Bounty Targets",
-                fontSize = 22.sp,
+                text = person.fullName,
+//                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-        }
-
-        items(peopleViewModel.fakePeople.take(5)) { person ->
-            PersonBountyCard(
-                person = person,
-                onClick = {
-                    peopleViewModel.selectPerson(person.id)
-                }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Bounty: $${person.bounty}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = person.location,
+                    fontSize = 14.sp
+                )
+            }
         }
     }
 }
