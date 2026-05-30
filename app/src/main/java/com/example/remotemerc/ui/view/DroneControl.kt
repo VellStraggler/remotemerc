@@ -102,7 +102,7 @@ fun DroneControls(playerViewModel: PlayerViewModel) {
         verticalAlignment = Alignment.Bottom){
 
         JoyStick {x, y ->
-            playerViewModel.downInput = y * y * y
+            playerViewModel.downInput = y
             playerViewModel.turnInput = x * x * x
         }
         SecondaryButton({playerViewModel.hoverMode = !playerViewModel.hoverMode}, )

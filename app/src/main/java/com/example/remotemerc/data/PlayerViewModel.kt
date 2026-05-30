@@ -13,10 +13,13 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-const val SPEED_MULT = 0.0002
-const val TURN_MUlT = 0.02f
-const val HEIGHT_MULT = 0.001f
-const val GRAVITY = 27f
+const val SPEED_MULT = 0.03
+const val TURN_MUlT = 2f
+const val HEIGHT_MULT = 0.1f
+const val GRAVITY = .005f
+
+const val VERTICAL_ACCEL = .01
+const val MAX_FALL_SPEED = .7f
 
 class PlayerViewModel : ViewModel() {
 
@@ -47,6 +50,8 @@ class PlayerViewModel : ViewModel() {
     position.y))
         private set
 
+    private var verticalVelocity = 0f
+
     fun setPosition(x:Float, y:Float, z:Float) {
         position = Position(x,y,z)
         shadowPosition = Position(x,0f, z)
@@ -54,6 +59,7 @@ class PlayerViewModel : ViewModel() {
     fun reset() {
         position = Position(0f,0.1f,0f)
         rotation = Rotation(0f,0f,0f)
+        verticalVelocity = 0f
     }
     fun initDroneStats(drone:LaunchedDrone) {
         controlledDrone = drone
@@ -72,13 +78,13 @@ class PlayerViewModel : ViewModel() {
         }
 
         /** in seconds */
-        val delta = d / 1000f
+        val delta = d / 100000f
         // update rotation from turn input
         speed = forwardInput * SPEED_MULT * topSpeed
         sideSpeed= sideInput * SPEED_MULT * topSpeed
 
         rotation = Rotation(
-        rotation.x + (pitchInput * delta * TURN_MUlT),
+        rotation.x + (-pitchInput * delta * TURN_MUlT),
         rotation.y + (-turnInput * delta * TURN_MUlT),
         rotation.z
         )
@@ -92,22 +98,35 @@ class PlayerViewModel : ViewModel() {
         val rightX = forwardZ
         val rightZ = -forwardX
 
-        val y = max(
-            min((
-                position.y -
-                    (downInput)
-                    * delta * HEIGHT_MULT
-                )
-                , maxHeight),
-            0f
+        val liftInput = if(hoverMode) {
+            0.0f
+        } else {
+            -downInput
+        }
+        verticalVelocity = max( -MAX_FALL_SPEED,
+            verticalVelocity -
+            (GRAVITY * delta) +
+            (liftInput * VERTICAL_ACCEL * delta).toFloat())
+
+        val y1 = min(
+            max(position.y + verticalVelocity * delta,0.2f),
+            maxHeight
         )
+
+        val y = max(min((
+                position.y -
+                        (downInput)
+                        * delta * HEIGHT_MULT
+                )
+            , maxHeight),
+        0.2f)
 
         setPosition(
             (position.x +
                     (forwardX * speed * delta) +
                     (rightX * sideSpeed * delta)
                     ).toFloat(),
-            (y),
+            (y1),
             (position.z +
                     (forwardZ * speed * delta) +
                     (rightZ * sideSpeed * delta)

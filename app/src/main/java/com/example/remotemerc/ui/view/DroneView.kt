@@ -106,7 +106,7 @@ fun GameScreen(
                     (ppos.x - cpos.x) * (ppos.x - cpos.x) +
                         (ppos.z - cpos.z) * (ppos.z - cpos.z)
                 )
-                if (d < 1f && cpos.y < PERSON_HEIGHT + .1f) {
+                if (d < 1.2f && cpos.y < PERSON_HEIGHT + .2f) {
                     Log.d("BOOM", "destroyed a guy")
                     data.people.removeAt(i)
                     explode()
@@ -114,10 +114,10 @@ fun GameScreen(
                     i++
                 }
             }
-            if (cpos.y < 0.1f){// && playerViewModel.speed > 1.0f) {
-                Log.d("BOOM", "you crashed")
-                explode()
-            }
+//            if (cpos.y < 0.1f){// && playerViewModel.speed > 1.0f) {
+//                Log.d("BOOM", "you crashed")
+//                explode()
+//            }
 
 
         }
