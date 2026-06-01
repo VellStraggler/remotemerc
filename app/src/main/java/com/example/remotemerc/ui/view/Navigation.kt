@@ -109,7 +109,7 @@ fun AppNavHost(
         }
 
         composable(AppScreen.DroneShop.route) {
-            DroneShopScreen(droneViewModel = droneViewModel)
+            DroneShopScreen(droneViewModel = droneViewModel, profileViewModel = profileViewModel)
         }
 
         composable(AppScreen.DroneView.route) {

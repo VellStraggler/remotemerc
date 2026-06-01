@@ -40,11 +40,12 @@ import com.example.remotemerc.R
 import com.example.remotemerc.data.Drone
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.data.FakePerson
+import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 @Composable
-fun DroneShopScreen(droneViewModel: DroneViewModel) {
+fun DroneShopScreen(droneViewModel: DroneViewModel, profileViewModel: ProfileViewModel) {
 
-    val cash = droneViewModel.cash
+    val cash = profileViewModel.cash
     val ownedDrones = droneViewModel.getAllOwned()
     val shopDrones = droneViewModel.getSortedShopDrones()
 
@@ -58,7 +59,7 @@ fun DroneShopScreen(droneViewModel: DroneViewModel) {
         ) {
             item {
                 HeaderSection(
-                    cash = cash,
+                    cash = cash.toDouble(),
                     ownedCount = ownedDrones.size
                 )
             }
@@ -97,7 +98,7 @@ fun DroneShopScreen(droneViewModel: DroneViewModel) {
                     drone = drone,
                     canAfford = drone.priceUSD <= cash,
                     onBuyClick = {
-                        droneViewModel.purchaseById(drone.id)
+                        droneViewModel.purchaseById(drone.id, profileViewModel)
                     }
                 )
             }

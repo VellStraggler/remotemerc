@@ -11,10 +11,10 @@ class ProfileViewModel : ViewModel() {
     var name by mutableStateOf("Mark")
         private set
 
-    var score by mutableIntStateOf(900)
+    var score by mutableIntStateOf(500)
         private set
 
-    var cash by mutableIntStateOf(190000)
+    var cash by mutableIntStateOf(900)
         private set
 
     fun addScore(amount: Int) {

@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.remotemerc.ui.view.DroneSortAttribute
 import com.example.remotemerc.ui.view.SortDirection
+import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 class DroneViewModel : ViewModel() {
 
@@ -112,11 +113,11 @@ class DroneViewModel : ViewModel() {
         myDrones.remove(getSelected())
     }
 
-    fun purchaseById(id: Int) {
-        attemptPurchase(id)
+    fun purchaseById(id: Int, profileViewModel: ProfileViewModel) {
+        attemptPurchase(id, profileViewModel)
     }
 
-    private fun attemptPurchase(id: Int): Boolean {
+    private fun attemptPurchase(id: Int, profileViewModel: ProfileViewModel): Boolean {
         val droneToBuy = shopDrones.firstOrNull { drone ->
             drone.id == id
         } ?: return false
@@ -125,7 +126,7 @@ class DroneViewModel : ViewModel() {
             return false
         }
 
-        cash -= droneToBuy.priceUSD
+        profileViewModel.spendCash(droneToBuy.priceUSD.toInt())
         myDrones.add(droneToBuy.launched())
         shopDrones.remove(droneToBuy)
 
