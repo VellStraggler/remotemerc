@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.remotemerc.data.CRASH_SPEED
 import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PersonOrientation
 import com.example.remotemerc.data.PlayerViewModel
@@ -106,7 +107,7 @@ fun GameScreen(
                     (ppos.x - cpos.x) * (ppos.x - cpos.x) +
                         (ppos.z - cpos.z) * (ppos.z - cpos.z)
                 )
-                if (d < 1.2f && cpos.y < PERSON_HEIGHT + .2f) {
+                if (d < 1.5f && cpos.y < PERSON_HEIGHT + .25f) {
                     Log.d("BOOM", "destroyed a guy")
                     data.people.removeAt(i)
                     explode()
@@ -114,10 +115,10 @@ fun GameScreen(
                     i++
                 }
             }
-//            if (cpos.y < 0.1f){// && playerViewModel.speed > 1.0f) {
-//                Log.d("BOOM", "you crashed")
-//                explode()
-//            }
+            if (cpos.y < 0.2 && playerViewModel.verticalVelocity <= -CRASH_SPEED) {
+                Log.d("BOOM", "you crashed")
+                explode()
+            }
 
 
         }

@@ -5,5 +5,5 @@ interface IDrone {
     val model: String
     val topSpeedMph: Double
     val maxAltitude: Int
-    val batteryLifeSeconds: Number
+    val maxBatterySecs: Number
 }

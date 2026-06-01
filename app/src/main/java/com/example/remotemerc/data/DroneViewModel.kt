@@ -67,7 +67,7 @@ class DroneViewModel : ViewModel() {
             }
 
             DroneSortAttribute.BATTERY -> shopDrones.sortedBy { drone ->
-                drone.batteryLifeSeconds
+                drone.maxBatterySecs
             }
 
             DroneSortAttribute.TNT -> shopDrones.sortedBy { drone ->

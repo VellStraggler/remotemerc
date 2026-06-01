@@ -3,6 +3,7 @@ package com.example.remotemerc.data
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -15,11 +16,11 @@ import kotlin.math.sin
 
 const val SPEED_MULT = 0.03
 const val TURN_MUlT = 2f
-const val HEIGHT_MULT = 0.1f
 const val GRAVITY = .005f
 
 const val VERTICAL_ACCEL = .01
 const val MAX_FALL_SPEED = .7f
+const val CRASH_SPEED = .3f
 
 class PlayerViewModel : ViewModel() {
 
@@ -43,6 +44,7 @@ class PlayerViewModel : ViewModel() {
         private set
     var maxHeight = 1f
     var batteryLeft by mutableFloatStateOf(10f)
+    var maxBatterySecs by mutableIntStateOf(10)
 
     var shadowPosition by mutableStateOf(Position(
         position.x,
@@ -50,7 +52,8 @@ class PlayerViewModel : ViewModel() {
     position.y))
         private set
 
-    private var verticalVelocity = 0f
+    var verticalVelocity by mutableFloatStateOf(0f)
+    private set
 
     fun setPosition(x:Float, y:Float, z:Float) {
         position = Position(x,y,z)
@@ -66,6 +69,7 @@ class PlayerViewModel : ViewModel() {
         topSpeed = drone.topSpeedMph
         maxHeight = drone.maxAltitude.toFloat()
         batteryLeft = drone.batteryLeft
+        maxBatterySecs = drone.maxBatterySecs
         position = drone.position
         rotation = drone.rotation
     }
@@ -80,6 +84,11 @@ class PlayerViewModel : ViewModel() {
         /** in seconds */
         val delta = d / 100000f
         // update rotation from turn input
+        if(position.y <= .2) {
+            forwardInput =0f
+            sideInput =0f
+        }
+
         speed = forwardInput * SPEED_MULT * topSpeed
         sideSpeed= sideInput * SPEED_MULT * topSpeed
 
@@ -95,7 +104,6 @@ class PlayerViewModel : ViewModel() {
         val forwardX = sin(Math.toRadians(newYaw.toDouble())).toFloat()
         val forwardZ = cos(Math.toRadians(newYaw.toDouble())).toFloat()
 
-        val rightX = forwardZ
         val rightZ = -forwardX
 
         val liftInput = if(hoverMode) {
@@ -109,22 +117,19 @@ class PlayerViewModel : ViewModel() {
             (liftInput * VERTICAL_ACCEL * delta).toFloat())
 
         val y1 = min(
-            max(position.y + verticalVelocity * delta,0.2f),
+            max(position.y + verticalVelocity * delta,0.1f),
             maxHeight
         )
-
-        val y = max(min((
-                position.y -
-                        (downInput)
-                        * delta * HEIGHT_MULT
-                )
-            , maxHeight),
-        0.2f)
+        // on ground
+        // vertical velocity is still required if we are at crashing speed
+        if(y1 < .2f && verticalVelocity >= -CRASH_SPEED) {
+            verticalVelocity = 0f
+        }
 
         setPosition(
             (position.x +
                     (forwardX * speed * delta) +
-                    (rightX * sideSpeed * delta)
+                    (forwardZ * sideSpeed * delta)
                     ).toFloat(),
             (y1),
             (position.z +
@@ -134,7 +139,8 @@ class PlayerViewModel : ViewModel() {
         )
 
         // BATTERY
-        if(speed != 0.0 && controlledDrone != null) {
+        if((speed != 0.0 || sideSpeed != 0.0 || liftInput != 0.0f)
+            && controlledDrone != null) {
             batteryLeft = controlledDrone!!.useBattery(delta)
         }
     }

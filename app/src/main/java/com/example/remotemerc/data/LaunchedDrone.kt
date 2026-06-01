@@ -8,9 +8,9 @@ class LaunchedDrone(
     override val model: String = "DroneModel",
     override val topSpeedMph: Double = 60.0,
     override val maxAltitude: Int = 6000,
-    override val batteryLifeSeconds: Int = 6000,
+    override val maxBatterySecs: Int = 6000,
 ) : IDrone {
-    var batteryLeft = batteryLifeSeconds.toFloat()
+    var batteryLeft = maxBatterySecs.toFloat()
         private set
 
     var position = Position(0f,0.1f,0f)

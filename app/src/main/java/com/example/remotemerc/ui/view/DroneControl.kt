@@ -44,13 +44,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.remotemerc.data.Drone
 import com.example.remotemerc.data.DroneViewModel
 import com.example.remotemerc.R
 import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.LaunchedDrone
 import com.example.remotemerc.data.PlayerViewModel
 import io.github.sceneview.rememberEngine
+import kotlin.math.min
+import kotlin.math.round
 
 @Composable
 fun DroneControl(modifier: Modifier = Modifier, droneViewModel: DroneViewModel,
@@ -67,15 +68,27 @@ fun DroneView(getDrone: () -> LaunchedDrone?, onBack: () -> Unit, playerViewMode
         DroneUI(onBack, playerViewModel)
     }
 }
-
+fun numString(num:Number): String {
+    return (round(num.toFloat() * 100)/100).toString()
+}
 @Composable
 fun DroneUI(onBack: () -> Unit, playerViewModel: PlayerViewModel) {
     Column(Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
-        IconButton({
-            onBack()
-        }, modifier = Modifier.size(24.dp)) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go Back")
+        Row(Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(
+                {onBack()},
+                modifier = Modifier.size(24.dp))
+                {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go Back")
+                }
+            Column(horizontalAlignment = Alignment.End) {
+                Text("vert: ${numString(playerViewModel.verticalVelocity)}")
+                Text("fwd: ${numString(-playerViewModel.speed)}")
+                Text("battery: ${numString(playerViewModel.batteryLeft)}/${numString(playerViewModel.maxBatterySecs)}")
+            }
         }
         DroneControls(playerViewModel)
     }
