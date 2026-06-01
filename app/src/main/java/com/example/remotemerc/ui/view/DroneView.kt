@@ -14,6 +14,7 @@ import com.example.remotemerc.data.CRASH_SPEED
 import com.example.remotemerc.data.GameDataViewModel
 import com.example.remotemerc.data.PersonOrientation
 import com.example.remotemerc.data.PlayerViewModel
+import com.example.remotemerc.data.WORLD_RADIUS
 import com.google.android.filament.Engine
 import com.google.android.filament.Material
 import com.google.android.filament.gltfio.FilamentInstance
@@ -23,13 +24,10 @@ import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
-import io.github.sceneview.node.CylinderNode
 import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
 import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 const val PERSON_HEIGHT = 2f
@@ -136,14 +134,14 @@ fun GameScreen(
         }
         // Ground
         PlaneNode(
-            size = Size(550f,550f),
+            size = Size(WORLD_RADIUS*2,WORLD_RADIUS*2),
             position = Position(0f,0f,0f),
             rotation = Rotation(-90f,0f, 0f),
             materialInstance = greenMaterial
         )
         // Skybox
         CubeNode(
-            size = Size(600f),
+            size = Size(WORLD_RADIUS*3),
             materialInstance = skyMaterial
         )
 

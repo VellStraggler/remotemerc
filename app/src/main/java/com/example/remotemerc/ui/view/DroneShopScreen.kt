@@ -296,7 +296,7 @@ fun DroneCard(
                 )
 
                 Text(
-                    text = "Battery: ${drone.batteryLifeSeconds}s",
+                    text = "Battery: ${drone.maxBatterySecs}s",
                     fontSize = 13.sp
                 )
             }

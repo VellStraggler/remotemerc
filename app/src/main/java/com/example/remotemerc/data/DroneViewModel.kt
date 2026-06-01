@@ -11,6 +11,8 @@ import com.example.remotemerc.ui.view.DroneSortAttribute
 import com.example.remotemerc.ui.view.SortDirection
 import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
+const val WORLD_RADIUS = 500f
+
 class DroneViewModel : ViewModel() {
 
     var selectedDroneId by mutableIntStateOf(-1)
