@@ -22,16 +22,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.remotemerc.data.DroneViewModel
+import com.example.remotemerc.ui.viewmodel.DroneViewModel
 import com.example.remotemerc.R
-import com.example.remotemerc.data.FakePerson
-import com.example.remotemerc.data.GameDataViewModel
-import com.example.remotemerc.data.PeopleViewModel
-import com.example.remotemerc.data.PlayerViewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import com.example.remotemerc.ui.viewmodel.GameDataViewModel
+import com.example.remotemerc.ui.viewmodel.PeopleViewModel
+import com.example.remotemerc.ui.viewmodel.PlayerViewModel
 import com.example.remotemerc.data.LaunchedDrone
 import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
@@ -41,14 +36,6 @@ sealed class AppScreen(val route: String) {
     data object DroneShop: AppScreen("drone-shop")
     data object DroneView: AppScreen("drone-view")
     data object MissionView: AppScreen("mission-view")
-
-    companion object {
-        val mainScreens = listOf(
-            Landing,
-            DroneControl,
-            DroneShop
-        )
-    }
 }
 
 @Composable
@@ -81,7 +68,6 @@ fun MyNavBar(navController: NavController) {
 
 @Composable
 fun AppNavHost(
-    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     droneViewModel: DroneViewModel,
     playerViewModel: PlayerViewModel,
@@ -105,7 +91,7 @@ fun AppNavHost(
         }
 
         composable(AppScreen.DroneControl.route) {
-            DroneControl(droneViewModel = droneViewModel, navController = navController)
+            DroneFleetControl(droneViewModel = droneViewModel, navController = navController)
         }
 
         composable(AppScreen.DroneShop.route) {
@@ -113,18 +99,25 @@ fun AppNavHost(
         }
 
         composable(AppScreen.DroneView.route) {
-            DroneView({ droneViewModel.getSelected() as LaunchedDrone? }, {
-                droneViewModel.selectedDroneId = -1
-                navController.navigate("drone-control")
-            },
-                playerViewModel, {
+            val explode = {
                 // explode
                 Log.d("DEAD", "target eliminated")
                 playerViewModel.reset()
                 droneViewModel.removeSelected()
                 navController.navigate("drone-control")
+            }
 
-            }, gameDataViewModel)
+            DroneView(
+                { droneViewModel.getSelected() as LaunchedDrone? },
+                {
+                    droneViewModel.selectedDroneId = -1
+                    navController.navigate("drone-control")
+                },
+                playerViewModel,
+                gameDataViewModel,
+                peopleViewModel,
+                explode,
+            )
         }
 
         composable(AppScreen.MissionView.route) {

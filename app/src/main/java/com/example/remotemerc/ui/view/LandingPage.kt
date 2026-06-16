@@ -31,7 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.remotemerc.data.FakePerson
-import com.example.remotemerc.data.PeopleViewModel
+import com.example.remotemerc.ui.viewmodel.PeopleViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue

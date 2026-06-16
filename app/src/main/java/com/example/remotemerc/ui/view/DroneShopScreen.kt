@@ -38,8 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.remotemerc.R
 import com.example.remotemerc.data.Drone
-import com.example.remotemerc.data.DroneViewModel
-import com.example.remotemerc.data.FakePerson
+import com.example.remotemerc.ui.viewmodel.DroneViewModel
 import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 @Composable

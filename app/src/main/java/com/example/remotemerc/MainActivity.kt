@@ -13,12 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.remotemerc.data.DroneViewModel
+import com.example.remotemerc.ui.viewmodel.DroneViewModel
 import com.example.remotemerc.data.FakeDroneRepo
 import com.example.remotemerc.data.FakePeopleRepo
-import com.example.remotemerc.data.GameDataViewModel
-import com.example.remotemerc.data.PeopleViewModel
-import com.example.remotemerc.data.PlayerViewModel
+import com.example.remotemerc.ui.viewmodel.GameDataViewModel
+import com.example.remotemerc.ui.viewmodel.PeopleViewModel
+import com.example.remotemerc.ui.viewmodel.PlayerViewModel
 import com.example.remotemerc.ui.theme.RemoteMercTheme
 import com.example.remotemerc.ui.view.AppNavHost
 import com.example.remotemerc.ui.view.AppScreen
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }) { innerPadding ->
                     Box(Modifier.padding(innerPadding)) {
-                        AppNavHost(Modifier,
+                        AppNavHost(
                             navController,
                             droneViewModel,
                             playerViewModel,

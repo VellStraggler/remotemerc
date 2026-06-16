@@ -1,4 +1,4 @@
-package com.example.remotemerc.data
+package com.example.remotemerc.ui.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -7,9 +7,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.remotemerc.data.Drone
+import com.example.remotemerc.data.FakeDroneRepo
+import com.example.remotemerc.data.IDrone
+import com.example.remotemerc.data.LaunchedDrone
 import com.example.remotemerc.ui.view.DroneSortAttribute
 import com.example.remotemerc.ui.view.SortDirection
-import com.example.remotemerc.ui.viewmodel.ProfileViewModel
 
 const val WORLD_RADIUS = 500f
 

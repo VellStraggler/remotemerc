@@ -1,4 +1,4 @@
-package com.example.remotemerc.data
+package com.example.remotemerc.ui.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.remotemerc.data.LaunchedDrone
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import kotlin.math.cos
@@ -14,12 +15,13 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-const val SPEED_MULT = 0.03
-const val TURN_MUlT = 2f
+const val SPEED_MULT = 0.02
+const val TURN_MUlT = 1f
 const val GRAVITY = .005f
 
-const val VERTICAL_ACCEL = .01
+const val VERTICAL_ACCEL = .01f
 const val MAX_FALL_SPEED = .7f
+const val CRASH_HEIGHT = .1f
 const val CRASH_SPEED = .3f
 
 class PlayerViewModel : ViewModel() {
@@ -33,7 +35,7 @@ class PlayerViewModel : ViewModel() {
     var pitchInput: Float by mutableFloatStateOf(0f)
     var cameraMode: Boolean by mutableStateOf(false)
     var hoverMode: Boolean by mutableStateOf(false)
-    var position = (Position(0f,0.1f,0f))
+    var position = (Position(0f,CRASH_HEIGHT-.01f,0f))
         private set
     var rotation = Rotation(0f,0f,0f)
         private set
@@ -48,7 +50,7 @@ class PlayerViewModel : ViewModel() {
 
     var shadowPosition by mutableStateOf(Position(
         position.x,
-    0.1f,
+    0.05f,
     position.y))
         private set
 
@@ -60,11 +62,11 @@ class PlayerViewModel : ViewModel() {
         shadowPosition = Position(x,0f, z)
     }
     fun reset() {
-        position = Position(0f,0.1f,0f)
+        position = Position(0f,CRASH_HEIGHT,0f)
         rotation = Rotation(0f,0f,0f)
         verticalVelocity = 0f
     }
-    fun initDroneStats(drone:LaunchedDrone) {
+    fun initDroneStats(drone: LaunchedDrone) {
         controlledDrone = drone
         topSpeed = drone.topSpeedMph
         maxHeight = drone.maxAltitude.toFloat()
@@ -77,7 +79,7 @@ class PlayerViewModel : ViewModel() {
     /** Takes (d)elta in milliseconds. Sets player position, including shadow and camera */
     fun update(d: Float) {
         if (cameraMode) {
-            pitchInput = downInput
+            pitchInput = downInput / 5f
             downInput = 0f
         }
 
@@ -114,16 +116,20 @@ class PlayerViewModel : ViewModel() {
         verticalVelocity = max( -MAX_FALL_SPEED,
             verticalVelocity -
             (GRAVITY * delta) +
-            (liftInput * VERTICAL_ACCEL * delta).toFloat())
+            (liftInput * VERTICAL_ACCEL * delta))
 
-        val y1 = min(
-            max(position.y + verticalVelocity * delta,0.1f),
+        var y1 = min(
+            max(position.y + verticalVelocity * delta,CRASH_HEIGHT - .05f),
             maxHeight
         )
         // on ground
         // vertical velocity is still required if we are at crashing speed
-        if(y1 < .2f && verticalVelocity >= -CRASH_SPEED) {
+        if(y1 < CRASH_HEIGHT && verticalVelocity >= -CRASH_SPEED) {
             verticalVelocity = 0f
+        }
+        if(hoverMode) {
+            verticalVelocity = 0f
+            y1 = position.y
         }
 
         setPosition(

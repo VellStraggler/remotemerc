@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.remotemerc.R
-import com.example.remotemerc.data.PeopleViewModel
+import com.example.remotemerc.ui.viewmodel.PeopleViewModel
 
 @Composable
 fun MissionProfilePage(peopleViewModel: PeopleViewModel) {
